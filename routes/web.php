@@ -2,6 +2,11 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FakultasController;
+use App\Http\Controllers\ProdiController;
+
+Route::resource('prodi', ProdiController::class);
+
 
 // Route untuk login
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -25,4 +30,5 @@ Route::middleware('auth')->group(function () {
         return view('admin.dashboard');  // Tampilkan halaman dashboard admin
     })->name('admin.dashboard');
 });
+Route::resource('fakultas', FakultasController::class);
 
