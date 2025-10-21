@@ -34,7 +34,7 @@
 
                 <div x-show="masterOpen" x-collapse class="pl-10 text-sm space-y-1 mt-1 text-gray-700">
                     <a href="#" class="block py-2 hover:text-gray-900 transition">🎓 Data Mahasiswa</a>
-                    <a href="#" class="block py-2 hover:text-gray-900 transition">👩‍💼 Data Staf Jurusan</a>
+                    <a href="{{ route('staff.index') }}" class="block py-2 hover:text-gray-900 transition">👩‍💼 Data Staf Jurusan</a>
                     <a href="#" class="block py-2 hover:text-gray-900 transition">🧾 Pejabat Berwenang</a>
                     <a href="{{ route('fakultas.index') }}" class="block py-2 text-amber-700 font-semibold bg-amber-200 rounded-r-full">🏛️ Data Fakultas</a>
                     <a href="{{ route('prodi.index') }}" class="block py-2 hover:text-gray-900 transition">📗 Data Prodi</a>

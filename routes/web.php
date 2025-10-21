@@ -1,34 +1,65 @@
 <?php
 
-use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FakultasController;
 use App\Http\Controllers\ProdiController;
+use App\Http\Controllers\StaffJurusanController;
 
-Route::resource('prodi', ProdiController::class);
+/*
+|--------------------------------------------------------------------------
+| AUTH ROUTES (LOGIN & LOGOUT)
+|--------------------------------------------------------------------------
+*/
 
-
-// Route untuk login
+// Halaman login
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+
+// Proses login
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 
-// ---- TAMBAHKAN ROUTE LOGOUT DI SINI ----
+// Proses logout
 Route::post('/logout', function (Request $request) {
-    Auth::logout(); // Logout user
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect('/login');
+})->name('logout');
 
-    $request->session()->invalidate(); // Hapus data sesi
-
-    $request->session()->regenerateToken(); // Buat token CSRF baru
-
-    return redirect('/login'); // Arahkan ke halaman login
-})->name('logout'); // Beri nama 'logout'
-// -----------------------------------------
-
-// Admin Dashboard (hanya bisa diakses setelah login)
+/*
+|--------------------------------------------------------------------------
+| ADMIN AKADEMIK ROUTES
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');  // Tampilkan halaman dashboard admin
-    })->name('admin.dashboard');
-});
-Route::resource('fakultas', FakultasController::class);
 
+    // Dashboard Admin
+    Route::get('/admin/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+
+    // CRUD Fakultas
+    Route::resource('fakultas', FakultasController::class);
+
+    // CRUD Prodi
+    Route::resource('prodi', ProdiController::class);
+
+    // CRUD Staff Jurusan (khusus Admin Akademik)
+    Route::resource('staff', StaffJurusanController::class)->except(['show']);
+    // except('show') supaya /staff/dashboard gak bentrok sama /staff/{id}
+});
+
+/*
+|--------------------------------------------------------------------------
+| STAF JURUSAN ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+
+    // Dashboard Staff Jurusan
+    Route::get('/staff/dashboard', function () {
+        return view('staff.dashboard');
+    })->name('staff.dashboard');
+});

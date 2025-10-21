@@ -23,5 +23,10 @@ class Prodi extends Model
     {
         return $this->belongsTo(Fakultas::class, 'id_fakultas');
     }
+    public function staff()
+{
+    return $this->hasMany(StaffJurusan::class, 'id_prodi');
+}
+
 }
 
