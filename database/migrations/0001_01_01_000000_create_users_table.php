@@ -6,21 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->string('id_user', 15)->primary(); // PK sebagai VARCHAR
-            $table->string('name', 100);
-            $table->string('email', 100)->unique();
-            $table->string('password', 255);
-            $table->unsignedBigInteger('id_role');  // FK ke roles
+            $table->id();
+            // Kita hapus $table->string('name'); karena nama ada di tabel profil
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-
-            $table->foreign('id_role')->references('id_role')->on('roles'); // Foreign key
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('users');

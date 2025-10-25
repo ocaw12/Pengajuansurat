@@ -6,15 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('roles', function (Blueprint $table) {
-            $table->id('id_role');
-            $table->string('nama_role');
+            $table->id(); // Secara default bigInteger, ini akan di-cast ke integer di model atau saat FK
+            $table->string('nama_role', 50)->unique(); // mahasiswa, staff jurusan, pejabat, admin akademik
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('roles');
