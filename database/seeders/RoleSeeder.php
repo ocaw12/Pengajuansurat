@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Role;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class RoleSeeder extends Seeder
@@ -18,9 +19,14 @@ class RoleSeeder extends Seeder
         Role::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        Role::create(['nama_role' => 'mahasiswa']);
-        Role::create(['nama_role' => 'staff jurusan']);
-        Role::create(['nama_role' => 'pejabat']);
-        Role::create(['nama_role' => 'admin akademik']);
+        $roles = [
+            ['nama_role' => 'mahasiswa'],
+            ['nama_role' => 'staff jurusan'],
+            ['nama_role' => 'pejabat'],
+            ['nama_role' => 'admin akademik'], // Nama baru
+        ];
+
+        Role::insert($roles);
     }
 }
+

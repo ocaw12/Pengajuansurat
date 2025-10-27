@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fakultas', function (Blueprint $table) {
+        Schema::create('admin_akademik', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_fakultas', 100)->unique();
-            // [ HAPUS ->after('nama_fakultas') DARI SINI ]
-            $table->string('kode_fakultas', 10)->unique()->comment('Contoh: FST, FEB');
+            $table->foreignId('user_id')->unique()->constrained('users')->cascadeOnDelete();
+            $table->string('nip_akademik', 50)->nullable();
+            $table->string('nama_lengkap', 255);
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fakultas');
+        Schema::dropIfExists('admin_akademik');
     }
 };

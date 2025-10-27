@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\JenisSurat;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class JenisSuratSeeder extends Seeder
@@ -17,33 +18,32 @@ class JenisSuratSeeder extends Seeder
         JenisSurat::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $tahunSekarang = date('Y');
-
-        // Surat 1: Keterangan Aktif (Tanpa Form Dinamis)
         JenisSurat::create([
             'kode_surat' => 'SK-AKTIF',
-            'nama_surat' => 'Surat Keterangan Aktif',
+            'nama_surat' => 'Surat Keterangan Aktif Kuliah',
             'kategori' => 'Akademik',
-            'isi_template' => "Yang bertanda tangan di bawah ini, menerangkan bahwa:\n\nNama: [nama_mahasiswa]\nNIM: [nim]\nProgram Studi: [prodi]\n\nAdalah benar mahasiswa aktif di Program Studi [prodi] Fakultas [fakultas] Universitas Proklamasi 45.\nSurat keterangan ini dibuat untuk keperluan [keperluan].",
-            'form_schema' => null,
-            'format_penomoran' => '{nomor_urut}/SK/{kode_unit}/{bulan_romawi}/{tahun}',
+            'isi_template' => "Nomor: [nomor_surat]\n\nYang bertanda tangan di bawah ini, [jabatan_pejabat] [fakultas], menerangkan bahwa:\n\nNama: [nama_mahasiswa]\nNIM: [nim]\nProgram Studi: [prodi]\nSemester: ...\n\nAdalah benar mahasiswa aktif pada semester ... Tahun Akademik ... Universitas Proklamasi 45.\nSurat keterangan ini dibuat untuk keperluan [keperluan].\n\nDemikian surat keterangan ini dibuat untuk dapat dipergunakan sebagaimana mestinya.",
+            'form_schema' => null, // Tidak perlu field tambahan
+            'format_penomoran' => '{nomor_urut}/SK/{kode_unit}/{bulan_romawi}/{tahun}', // {kode_unit} akan mengambil dari prodi
             'counter_nomor_urut' => 0,
-            'counter_tahun' => $tahunSekarang,
+            'counter_tahun' => null,
         ]);
 
-        // Surat 2: Izin Penelitian (Dengan Form Dinamis)
         JenisSurat::create([
-            'kode_surat' => 'IZIN-PEN',
+            'kode_surat' => 'SP-PENELITIAN',
             'nama_surat' => 'Surat Izin Penelitian',
             'kategori' => 'Penelitian',
-            'isi_template' => "Dengan ini kami memberikan izin kepada:\n\nNama: [nama_mahasiswa]\nNIM: [nim]\nProgram Studi: [prodi]\n\nUntuk melaksanakan penelitian di [lokasi_penelitian] dengan judul \"[judul_penelitian]\" dalam rangka penyusunan tugas akhir.\nSurat ini dibuat untuk keperluan [keperluan].",
-            'form_schema' => [
-                ['name' => 'judul_penelitian', 'label' => 'Judul Penelitian Anda', 'type' => 'text'],
-                ['name' => 'lokasi_penelitian', 'label' => 'Nama Instansi/Lokasi Penelitian', 'type' => 'text'],
-            ],
+            'isi_template' => "Nomor: [nomor_surat]\n\nDengan hormat,\nYang bertanda tangan di bawah ini, [jabatan_pejabat] [fakultas], memberikan izin kepada mahasiswa:\n\nNama: [nama_mahasiswa]\nNIM: [nim]\nProgram Studi: [prodi]\n\nUntuk melaksanakan penelitian dengan judul \"[judul_penelitian]\" di [lokasi].\nPenelitian akan dilaksanakan mulai tanggal [tgl_mulai] sampai dengan [tgl_selesai].\n\nDemikian surat izin ini dibuat untuk dapat dipergunakan sebagaimana mestinya.",
+            'form_schema' => json_encode([ // Encode manual jika tidak pakai Factory
+                ['name' => 'judul_penelitian', 'label' => 'Judul Penelitian', 'type' => 'text', 'required' => true],
+                ['name' => 'lokasi', 'label' => 'Lokasi/Instansi Penelitian', 'type' => 'text', 'required' => true],
+                ['name' => 'tgl_mulai', 'label' => 'Tanggal Mulai', 'type' => 'date', 'required' => true],
+                ['name' => 'tgl_selesai', 'label' => 'Tanggal Selesai', 'type' => 'date', 'required' => true],
+            ]),
             'format_penomoran' => '{nomor_urut}/SP/{kode_unit}/{bulan_romawi}/{tahun}',
             'counter_nomor_urut' => 0,
-            'counter_tahun' => $tahunSekarang,
+            'counter_tahun' => null,
         ]);
     }
 }
+

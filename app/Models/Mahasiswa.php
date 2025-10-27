@@ -4,41 +4,46 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 
 class Mahasiswa extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'mahasiswa';
+
     protected $fillable = [
-        'user_id', 
-        'nim', 
-        'nama_lengkap', 
-        'program_studi_id', 
-        'angkatan'
+        'user_id',
+        'nim',
+        'nama_lengkap',
+        'program_studi_id',
+        'angkatan',
+        // Kolom detail baru
+        'tempat_lahir',
+        'tanggal_lahir',
+        'alamat',
+        'jenis_kelamin',
     ];
 
-    /**
-     * Mendapatkan akun user dari mahasiswa.
-     */
-    public function user()
+    protected $casts = [
+        'tanggal_lahir' => 'date', // Cast ke tipe date
+    ];
+
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    /**
-     * Mendapatkan program studi dari mahasiswa.
-     */
-    public function programStudi()
+    public function programStudi(): BelongsTo
     {
-        return $this->belongsTo(ProgramStudi::class);
+        return $this->belongsTo(ProgramStudi::class, 'program_studi_id');
     }
 
-    /**
-     * Mendapatkan semua pengajuan surat oleh mahasiswa ini.
-     */
-    public function pengajuanSurats()
+    public function pengajuanSurats(): HasMany
     {
-        return $this->hasMany(PengajuanSurat::class);
+        return $this->hasMany(PengajuanSurat::class, 'mahasiswa_id');
     }
 }
+

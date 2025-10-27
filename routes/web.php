@@ -92,19 +92,19 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [StaffDashboard::class, 'index'])->name('dashboard'); // Antrian validasi
 
         // web.php (Perbaikan)
-Route::get('/validasi/{pengajuan}', [ValidasiController::class, 'show'])->name('validasi.show');
-Route::post('/validasi/{pengajuan}', [ValidasiController::class, 'validateSubmission'])->name('validasi.submit');
-Route::get('/validasi', [ValidasiController::class, 'index'])->name('validasi.index');
-Route::post('/tandai-diambil/{pengajuan}', [ValidasiController::class, 'markAsDiambil'])->name('validasi.diambil');
-// web.php (Perbaikan)
+        Route::get('/validasi/{pengajuan}', [ValidasiController::class, 'show'])->name('validasi.show');
+        Route::post('/validasi/{pengajuan}', [ValidasiController::class, 'validateSubmission'])->name('validasi.submit');
+        Route::get('/validasi', [ValidasiController::class, 'index'])->name('validasi.index');
+        Route::post('/tandai-diambil/{pengajuan}', [ValidasiController::class, 'markAsDiambil'])->name('validasi.diambil');
+        // web.php (Perbaikan)
 
-// Ganti 'antrianCetak' menjadi 'indexCetak'
-Route::get('/antrian-cetak', [ValidasiController::class, 'indexCetak'])->name('validasi.cetak');
+        // Ganti 'antrianCetak' menjadi 'indexCetak'
+        Route::get('/antrian-cetak', [ValidasiController::class, 'indexCetak'])->name('validasi.cetak');
 
-// Ganti 'tandaiDiambil' menjadi 'markAsDiambil'
-Route::post('/tandai-diambil/{pengajuan}', [ValidasiController::class, 'markAsDiambil'])->name('validasi.diambil');
+        // Ganti 'tandaiDiambil' menjadi 'markAsDiambil'
+        Route::post('/tandai-diambil/{pengajuan}', [ValidasiController::class, 'markAsDiambil'])->name('validasi.diambil');
 
-});
+        });
 
     /*
     |--------------------------------------------------------------------------
@@ -121,8 +121,8 @@ Route::post('/tandai-diambil/{pengajuan}', [ValidasiController::class, 'markAsDi
         // Rute untuk approval
         Route::get('/approval', [ApprovalController::class, 'index'])->name('approval.index');
         // Rute untuk approval
-Route::get('/approval/{approval}', [ApprovalController::class, 'show'])->name('approval.show');
-Route::post('/approval/{approval}', [ApprovalController::class, 'approveOrReject'])->name('approval.submit');
+        Route::get('/approval/{approval}', [ApprovalController::class, 'show'])->name('approval.show');
+        Route::post('/approval/{approval}', [ApprovalController::class, 'approveOrReject'])->name('approval.submit');
     });
 
     /*

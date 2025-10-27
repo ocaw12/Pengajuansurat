@@ -6,6 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo; // Tambahkan ini
+use Illuminate\Database\Eloquent\Relations\HasOne; // Tambahkan ini
+
 
 class User extends Authenticatable
 {
@@ -17,9 +20,10 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        // Hapus 'name', tambahkan 'role_id' jika belum
         'email',
         'password',
-        'role_id', // Tambahkan role_id
+        'role_id',
     ];
 
     /**
@@ -45,37 +49,44 @@ class User extends Authenticatable
         ];
     }
 
-    // === RELASI ===
-
     /**
-     * Mendapatkan role (peran) dari user.
+     * Relasi ke Role: Satu user memiliki satu role.
      */
-    public function role()
+    public function role(): BelongsTo
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class, 'role_id');
     }
 
     /**
-     * Mendapatkan profil mahasiswa jika user ini adalah mahasiswa.
+     * Relasi ke Mahasiswa: Satu user bisa jadi satu mahasiswa.
      */
-    public function mahasiswa()
+    public function mahasiswa(): HasOne
     {
-        return $this->hasOne(Mahasiswa::class);
+        return $this->hasOne(Mahasiswa::class, 'user_id');
     }
 
     /**
-     * Mendapatkan profil pejabat jika user ini adalah pejabat.
+     * Relasi ke Pejabat: Satu user bisa jadi satu pejabat.
      */
-    public function pejabat()
+    public function pejabat(): HasOne
     {
-        return $this->hasOne(Pejabat::class);
+        return $this->hasOne(Pejabat::class, 'user_id');
     }
 
     /**
-     * Mendapatkan profil staff jurusan jika user ini adalah staff jurusan.
+     * Relasi ke AdminStaff: Satu user bisa jadi satu admin staff.
      */
-    public function adminStaff()
+    public function adminStaff(): HasOne
     {
-        return $this->hasOne(AdminStaff::class);
+        return $this->hasOne(AdminStaff::class, 'user_id');
+    }
+
+    /**
+     * Relasi ke AdminAkademik: Satu user bisa jadi satu admin akademik.
+     */
+    public function adminAkademik(): HasOne
+    {
+        return $this->hasOne(AdminAkademik::class, 'user_id');
     }
 }
+
