@@ -2,42 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth; // Jangan lupa use Auth
 
 class DashboardController extends Controller
 {
     /**
-     * Mengarahkan pengguna ke dashboard yang sesuai berdasarkan peran.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * Handle the incoming request.
+     * Redirect user ke dashboard yang sesuai berdasarkan role.
      */
-    public function index(Request $request) // <-- NAMA METHOD DIUBAH DI SINI
+    public function index(): RedirectResponse
     {
-        // Pastikan user sudah login (meskipun sudah ada middleware)
-        if (!Auth::check()) {
-            return redirect('/login');
+        $user = Auth::user();
+
+        // Cek apakah user punya role (penting setelah login/register)
+        if (!$user || !$user->role) {
+            // Jika tidak ada role, mungkin arahkan ke halaman profil atau logout
+            Auth::logout();
+            return redirect('/login')->with('error', 'Role pengguna tidak ditemukan.');
         }
 
-        $role = Auth::user()->role->nama_role;
+        $role = $user->role->nama_role;
 
+        // Logika Redirect Berdasarkan Role
         switch ($role) {
             case 'mahasiswa':
                 return redirect()->route('mahasiswa.dashboard');
             case 'staff jurusan':
-                return redirect()->route('staff.validasi.index');
+                // Di controller StaffJurusan kita namai rutenya staff_jurusan.dashboard
+                return redirect()->route('staff_jurusan.dashboard');
             case 'pejabat':
-                return redirect()->route('pejabat.approval.index');
-            case 'admin akademik':
-                // Arahkan ke dashboard admin akademik jika sudah dibuat
-                // return redirect()->route('admin.dashboard');
-                // Untuk sementara, kita bisa redirect ke home atau halaman lain
-                return redirect('/')->with('success', 'Login sebagai Admin Akademik berhasil.');
+                return redirect()->route('pejabat.dashboard');
+            case 'admin akademik': // <-- TAMBAHKAN KONDISI INI
+                return redirect()->route('admin_akademik.dashboard'); // Rute baru
             default:
-                // Jika role tidak dikenali, logout untuk keamanan
+                // Fallback jika role tidak dikenali
                 Auth::logout();
-                return redirect('/login')->with('error', 'Role pengguna tidak dikenali.');
+                return redirect('/login')->with('error', 'Role tidak valid.');
         }
     }
 }

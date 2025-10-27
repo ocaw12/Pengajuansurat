@@ -132,7 +132,7 @@ Route::middleware(['auth'])->group(function () {
     */
     Route::middleware('role:admin akademik')
          ->prefix('admin-akademik')
-         ->name('admin-akademik.')
+         ->name('admin_akademik.')
          ->group(function () {
         
         Route::get('/dashboard', [AdminAkademikDashboard::class, 'index'])->name('dashboard');

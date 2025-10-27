@@ -5,9 +5,15 @@ namespace App\Http\Requests\Auth;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash; // Tambahkan use Hash
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use App\Models\User; // Tambahkan use User
+use App\Models\Mahasiswa; // Tambahkan use Mahasiswa
+use App\Models\Pejabat; // Tambahkan use Pejabat
+use App\Models\AdminStaff; // Tambahkan use AdminStaff
+use App\Models\AdminAkademik; // Tambahkan use AdminAkademik
 
 class LoginRequest extends FormRequest
 {
@@ -22,12 +28,13 @@ class LoginRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
      */
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            // Ganti 'email' menjadi 'identifier'
+            'identifier' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -41,16 +48,57 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $identifier = $this->input('identifier');
+        $password = $this->input('password');
+        $remember = $this->boolean('remember');
+        $user = null;
+
+        // 1. Coba cari berdasarkan Email dulu
+        if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+            $user = User::where('email', $identifier)->first();
+        } else {
+            // 2. Jika bukan email, coba cari berdasarkan NIM/NIP
+            // Cari Mahasiswa berdasarkan NIM
+            $mahasiswa = Mahasiswa::where('nim', $identifier)->with('user')->first();
+            if ($mahasiswa) {
+                $user = $mahasiswa->user;
+            } else {
+                // Cari Pejabat berdasarkan NIP/NIDN
+                $pejabat = Pejabat::where('nip_atau_nidn', $identifier)->with('user')->first();
+                if ($pejabat) {
+                    $user = $pejabat->user;
+                } else {
+                    // Cari Staff Jurusan berdasarkan NIP
+                    $staff = AdminStaff::where('nip_staff', $identifier)->with('user')->first();
+                    if ($staff) {
+                        $user = $staff->user;
+                    } else {
+                        // Cari Admin Akademik berdasarkan NIP
+                        $admin = AdminAkademik::where('nip_akademik', $identifier)->with('user')->first();
+                        if ($admin) {
+                            $user = $admin->user;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3. Verifikasi User dan Password
+        if (! $user || ! Hash::check($password, $user->password)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                // Arahkan error ke field 'identifier'
+                'identifier' => trans('auth.failed'),
             ]);
         }
 
+        // 4. Lakukan Login
+        Auth::login($user, $remember);
+
         RateLimiter::clear($this->throttleKey());
     }
+
 
     /**
      * Ensure the login request is not rate limited.
@@ -68,7 +116,8 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            // Arahkan error ke field 'identifier'
+            'identifier' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -80,6 +129,7 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        // Gunakan 'identifier' + IP address
+        return Str::transliterate(Str::lower($this->input('identifier')).'|'.$this->ip());
     }
 }

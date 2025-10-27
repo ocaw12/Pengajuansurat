@@ -6,11 +6,13 @@
         @csrf
 
         <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        <div class="mb-3">
+    <label for="identifier" class="form-label">{{ __('NIM / NIP / Email') }}</label>
+    {{-- Ganti type="email" menjadi type="text" --}}
+    <input id="identifier" class="form-control" type="text" name="identifier" :value="old('identifier')" required autofocus autocomplete="username" placeholder="Masukkan NIM, NIP, atau Email Anda" />
+    {{-- Arahkan error ke 'identifier' --}}
+    <x-input-error :messages="$errors->get('identifier')" class="mt-2" />
+</div>
 
         <!-- Password -->
         <div class="mt-4">
