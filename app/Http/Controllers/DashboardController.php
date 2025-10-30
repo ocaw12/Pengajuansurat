@@ -31,9 +31,9 @@ class DashboardController extends Controller
                 return redirect()->route('mahasiswa.dashboard');
             case 'staff jurusan':
                 // Di controller StaffJurusan kita namai rutenya staff_jurusan.dashboard
-                return redirect()->route('staff_jurusan.dashboard');
+                return redirect()->route('staff.validasi.index');
             case 'pejabat':
-                return redirect()->route('pejabat.dashboard');
+                return redirect()->route('pejabat.approval.index');
             case 'admin akademik': // <-- TAMBAHKAN KONDISI INI
                 return redirect()->route('admin_akademik.dashboard'); // Rute baru
             default:

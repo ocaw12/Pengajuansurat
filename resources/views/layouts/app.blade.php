@@ -229,7 +229,7 @@
         {{-- Header Sidebar (Fixed) --}}
         <a href="{{ route('dashboard') }}" class="sidebar-header text-white text-decoration-none">
             {{-- Ganti 'logo.png' dengan path logo kampus Anda --}}
-            <img src="{{ asset('images/logo-placeholder.png') }}" alt="Logo UP45">
+            <img src="{{ asset('images/logoup45.png') }}" alt="Logo UP45">
             <span class="fs-5">SISURAT UP45</span>
         </a>
 
@@ -262,12 +262,12 @@
                 @elseif($role === 'staff jurusan')
                     {{-- == MENU STAFF JURUSAN == --}}
                     <li class="nav-item">
-                        <a href="{{ route('staff_jurusan.validasi.index') }}" class="nav-link {{ request()->routeIs('staff_jurusan.validasi.*') ? 'active' : '' }}">
+                        <a href="{{ route('staff.validasi.index') }}" class="nav-link {{ request()->routeIs('staff_jurusan.validasi.*') ? 'active' : '' }}">
                             <i class="bi bi-clipboard-check"></i><span>Antrian Validasi</span>
                         </a>
                     </li>
                      <li class="nav-item">
-                        <a href="{{ route('staff_jurusan.cetak.index') }}" class="nav-link {{ request()->routeIs('staff_jurusan.cetak.*') ? 'active' : '' }}">
+                        <a href="{{ route('staff.cetak.index') }}" class="nav-link {{ request()->routeIs('staff_jurusan.cetak.*') ? 'active' : '' }}">
                             <i class="bi bi-printer"></i><span>Antrian Cetak</span>
                         </a>
                     </li>

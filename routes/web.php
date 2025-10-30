@@ -84,7 +84,7 @@ Route::middleware(['auth'])->group(function () {
     | 🧑‍💼 GRUP STAFF JURUSAN
     |--------------------------------------------------------------------------
     */
-    Route::middleware('role:staff jurusan')
+     Route::middleware('role:staff jurusan')
          ->prefix('staff')
          ->name('staff.')
          ->group(function () {
@@ -92,11 +92,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [StaffDashboard::class, 'index'])->name('dashboard'); // Antrian validasi
 
         // web.php (Perbaikan)
-        Route::get('/validasi/{pengajuan}', [ValidasiController::class, 'show'])->name('validasi.show');
-        Route::post('/validasi/{pengajuan}', [ValidasiController::class, 'validateSubmission'])->name('validasi.submit');
-        Route::get('/validasi', [ValidasiController::class, 'index'])->name('validasi.index');
-        Route::post('/tandai-diambil/{pengajuan}', [ValidasiController::class, 'markAsDiambil'])->name('validasi.diambil');
-        // web.php (Perbaikan)
+Route::get('/validasi/{pengajuan}', [ValidasiController::class, 'show'])->name('validasi.show');
+Route::post('/validasi/{pengajuan}', [ValidasiController::class, 'validateSubmission'])->name('validasi.submit');
+Route::get('/validasi', [ValidasiController::class, 'index'])->name('validasi.index');
+Route::get('/cetak', [ValidasiController::class, 'index'])->name('cetak.index');
+
+Route::post('/tandai-diambil/{pengajuan}', [ValidasiController::class, 'markAsDiambil'])->name('validasi.diambil');
 
         // Ganti 'antrianCetak' menjadi 'indexCetak'
         Route::get('/antrian-cetak', [ValidasiController::class, 'indexCetak'])->name('validasi.cetak');
