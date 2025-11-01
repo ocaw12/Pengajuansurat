@@ -346,7 +346,7 @@
 
                     <li class="nav-heading"><span>Data Master</span></li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('admin_akademik.fakultas.*') ? 'active' : '' --}}">
+                        <a href="{{ route('admin_akademik.fakultas.index') }}" class="nav-link {{-- request()->routeIs('admin_akademik.fakultas.*') ? 'active' : '' --}}">
                             <i class="bi bi-building"></i><span>Fakultas</span>
                         </a>
                     </li>

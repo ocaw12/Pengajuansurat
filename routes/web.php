@@ -20,7 +20,7 @@ use App\Http\Controllers\Pejabat\ApprovalController;
 // --- CONTROLLER ADMIN AKADEMIK ---
 use App\Http\Controllers\AdminAkademik\DashboardController as AdminAkademikDashboard;
 use App\Http\Controllers\AdminAkademik\UserController;
-use App\Http\Controllers\AdminAkademik\FakultasController;
+use App\Http\Controllers\AdminAkademik\AdminFakultasController;
 use App\Http\Controllers\AdminAkademik\ProgramStudiController;
 use App\Http\Controllers\AdminAkademik\MasterJabatanController;
 use App\Http\Controllers\AdminAkademik\PejabatController;
@@ -140,11 +140,13 @@ Route::post('/tandai-diambil/{pengajuan}', [ValidasiController::class, 'markAsDi
 
         // CRUD untuk semua data master
         Route::resource('users', UserController::class); // Manajemen Akun User
-        Route::resource('fakultas', FakultasController::class);
+        Route::resource('fakultas', AdminFakultasController::class)
+     ->parameters(['fakultas' => 'fakultas']);
         Route::resource('program-studi', ProgramStudiController::class);
         Route::resource('master-jabatan', MasterJabatanController::class);
         Route::resource('pejabat', PejabatController::class); // Manajemen Profil Pejabat
         Route::resource('admin-staff', AdminStaffController::class); // Manajemen Profil Staff
+// Di routes/web.php
 
         // CRUD untuk Jenis Surat (Katalog)
         Route::resource('jenis-surat', JenisSuratController::class);
