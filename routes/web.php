@@ -21,7 +21,7 @@ use App\Http\Controllers\Pejabat\ApprovalController;
 use App\Http\Controllers\AdminAkademik\DashboardController as AdminAkademikDashboard;
 use App\Http\Controllers\AdminAkademik\UserController;
 use App\Http\Controllers\AdminAkademik\AdminFakultasController;
-use App\Http\Controllers\AdminAkademik\ProgramStudiController;
+use App\Http\Controllers\AdminAkademik\ProdiController;
 use App\Http\Controllers\AdminAkademik\MasterJabatanController;
 use App\Http\Controllers\AdminAkademik\PejabatController;
 use App\Http\Controllers\AdminAkademik\AdminStaffController;
@@ -131,22 +131,27 @@ Route::post('/tandai-diambil/{pengajuan}', [ValidasiController::class, 'markAsDi
     | 👑 GRUP ADMIN AKADEMIK
     |--------------------------------------------------------------------------
     */
-    Route::middleware('role:admin akademik')
-         ->prefix('admin-akademik')
-         ->name('admin_akademik.')
-         ->group(function () {
-        
+   // Rute admin akademik
+Route::middleware('role:admin akademik')
+    ->prefix('admin-akademik')
+    ->name('admin_akademik.')
+    ->group(function () {
+
         Route::get('/dashboard', [AdminAkademikDashboard::class, 'index'])->name('dashboard');
 
         // CRUD untuk semua data master
         Route::resource('users', UserController::class); // Manajemen Akun User
         Route::resource('fakultas', AdminFakultasController::class)
-     ->parameters(['fakultas' => 'fakultas']);
-        Route::resource('program-studi', ProgramStudiController::class);
-        Route::resource('master-jabatan', MasterJabatanController::class);
+             ->parameters(['fakultas' => 'fakultas']); // Menambahkan parameter fakultas
+
+        // **PERBAIKI BAGIAN INI**
+        // Rute Prodi (dengan namespace yang benar)
+        Route::resource('prodi', ProdiController::class); // Pastikan route prodi sudah benar
+       
+// Di dalam file web.php
+Route::resource('master-jabatan', MasterJabatanController::class);
         Route::resource('pejabat', PejabatController::class); // Manajemen Profil Pejabat
         Route::resource('admin-staff', AdminStaffController::class); // Manajemen Profil Staff
-// Di routes/web.php
 
         // CRUD untuk Jenis Surat (Katalog)
         Route::resource('jenis-surat', JenisSuratController::class);
@@ -157,5 +162,6 @@ Route::post('/tandai-diambil/{pengajuan}', [ValidasiController::class, 'markAsDi
         // /admin-akademik/alur/{alur}/edit
         Route::resource('jenis-surat.alur', AlurApprovalController::class)->shallow();
     });
+
 
 });

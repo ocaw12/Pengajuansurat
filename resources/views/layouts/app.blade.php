@@ -351,13 +351,13 @@
                         </a>
                     </li>
                      <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('admin_akademik.prodi.*') ? 'active' : '' --}}">
+                        <a href="{{ route('admin_akademik.prodi.index') }}" class="nav-link {{-- request()->routeIs('admin_akademik.prodi.*') ? 'active' : '' --}}">
                             <i class="bi bi-diagram-3"></i><span>Program Studi</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('admin_akademik.jabatan.*') ? 'active' : '' --}}">
-                            <i class="bi bi-briefcase"></i><span>Jabatan Struktural</span>
+                        <a href="{{ route('admin_akademik.master-jabatan.index') }}" class="nav-link {{-- request()->routeIs('admin_akademik.jabatan.*') ? 'active' : '' --}}">
+                            <i class="bi bi-briefcase"></i><span>Master Jabatan</span>
                         </a>
                     </li>
                      <li class="nav-item">
