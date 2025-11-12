@@ -23,10 +23,14 @@ use App\Http\Controllers\AdminAkademik\UserController;
 use App\Http\Controllers\AdminAkademik\AdminFakultasController;
 use App\Http\Controllers\AdminAkademik\ProdiController;
 use App\Http\Controllers\AdminAkademik\MasterJabatanController;
+use App\Http\Controllers\AdminAkademik\MahasiswaController;
 use App\Http\Controllers\AdminAkademik\PejabatController;
 use App\Http\Controllers\AdminAkademik\AdminStaffController;
 use App\Http\Controllers\AdminAkademik\JenisSuratController;
 use App\Http\Controllers\AdminAkademik\AlurApprovalController;
+use App\Http\Controllers\DownloadController;
+use App\Http\Controllers\VerifikasiController;
+
 
 
 /*
@@ -48,6 +52,8 @@ require __DIR__.'/auth.php';
 | Rute Utama (Wajib Login)
 |--------------------------------------------------------------------------
 */
+Route::get('/preview/{fileName}', [DownloadController::class, 'preview'])->name('preview.surat');
+
 
 Route::middleware(['auth'])->group(function () {
 
@@ -77,6 +83,11 @@ Route::middleware(['auth'])->group(function () {
         
         // Rute untuk detail (Anda akan butuh ini nanti)
         Route::get('/pengajuan/{pengajuan}', [PengajuanController::class, 'show'])->name('pengajuan.show');
+
+
+        Route::get('/download/{filename}', [DownloadController::class, 'download'])->name('download.surat');
+
+
     });
 
     /*
@@ -132,7 +143,7 @@ Route::post('/tandai-diambil/{pengajuan}', [ValidasiController::class, 'markAsDi
     |--------------------------------------------------------------------------
     */
    // Rute admin akademik
-Route::middleware('role:admin akademik')
+    Route::middleware('role:admin akademik')
     ->prefix('admin-akademik')
     ->name('admin_akademik.')
     ->group(function () {
@@ -151,7 +162,11 @@ Route::middleware('role:admin akademik')
 // Di dalam file web.php
 Route::resource('master-jabatan', MasterJabatanController::class);
         Route::resource('pejabat', PejabatController::class); // Manajemen Profil Pejabat
-        Route::resource('admin-staff', AdminStaffController::class); // Manajemen Profil Staff
+Route::resource('admin-staff', AdminStaffController::class); 
+Route::get('admin-staff/{id}/edit', [AdminStaffController::class, 'edit'])->name('admin_akademik.admin-staff.edit');
+Route::put('admin-staff/{id}', [AdminStaffController::class, 'update'])->name('admin_akademik.admin-staff.update');
+Route::resource('mahasiswa', MahasiswaController::class); // CRUD untuk Mahasiswa
+Route::put('mahasiswa/{id}', [MahasiswaController::class, 'update'])->name('admin_akademik.mahasiswa.update');
 
         // CRUD untuk Jenis Surat (Katalog)
         Route::resource('jenis-surat', JenisSuratController::class);
@@ -163,5 +178,8 @@ Route::resource('master-jabatan', MasterJabatanController::class);
         Route::resource('jenis-surat.alur', AlurApprovalController::class)->shallow();
     });
 
+Route::get('/download/{fileName}', [DownloadController::class, 'download'])->name('download.surat');
 
 });
+Route::get('verifikasi/{kode_verifikasi}', [VerifikasiController::class, 'show'])->name('verifikasi.show');
+

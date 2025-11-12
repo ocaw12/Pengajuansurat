@@ -328,17 +328,17 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('admin_akademik.pejabat.*') ? 'active' : '' --}}">
+                        <a href="{{ route('admin_akademik.pejabat.index') }}" class="nav-link {{-- request()->routeIs('admin_akademik.pejabat.*') ? 'active' : '' --}}">
                             <i class="bi bi-person-badge"></i><span>Manajemen Pejabat</span>
                         </a>
                     </li>
                      <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('admin_akademik.staff.*') ? 'active' : '' --}}">
+                        <a href="{{ route('admin_akademik.admin-staff.index') }}" class="nav-link {{-- request()->routeIs('admin_akademik.staff.*') ? 'active' : '' --}}">
                             <i class="bi bi-person-workspace"></i><span>Manajemen Staff</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('admin_akademik.mahasiswa.*') ? 'active' : '' --}}">
+                        <a href="{{ route('admin_akademik.mahasiswa.index') }}" class="nav-link {{-- request()->routeIs('admin_akademik.mahasiswa.*') ? 'active' : '' --}}">
                             <i class="bi bi-person-vcard"></i><span>Manajemen Mahasiswa</span>
                         </a>
                     </li>
@@ -360,12 +360,7 @@
                             <i class="bi bi-briefcase"></i><span>Master Jabatan</span>
                         </a>
                     </li>
-                     <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('admin_akademik.roles.*') ? 'active' : '' --}}">
-                            <i class="bi bi-shield-check"></i><span>Role & Permission</span>
-                        </a>
-                    </li>
-
+                    
                      <li class="nav-heading"><span>Sistem</span></li>
                       <li class="nav-item">
                         <a href="#" class="nav-link {{-- request()->routeIs('admin_akademik.settings.*') ? 'active' : '' --}}">

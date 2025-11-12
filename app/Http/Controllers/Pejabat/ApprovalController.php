@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use SimpleSoftwareIO\QrCode\Facades\QrCode; // Gunakan Simple QR Code
+use Illuminate\Support\Str;
 
 class ApprovalController extends Controller
 {
@@ -20,29 +22,22 @@ class ApprovalController extends Controller
     {
         $pejabatId = Auth::user()->pejabat->id;
 
-        // Query ini SANGAT PENTING.
-        // 1. Ambil semua antrian 'menunggu' untuk pejabat ini.
-        // 2. Filter: Hanya tampilkan jika urutan 1, ATAU urutan sebelumnya sudah 'disetujui'.
         $antrians = ApprovalPejabat::where('pejabat_id', $pejabatId)
             ->where('status_approval', 'menunggu')
             ->whereHas('pengajuanSurat', function ($q) {
-                // Pastikan surat utamanya masih aktif (belum ditolak di level lain)
-                $q->where('status_pengajuan', 'menunggu_pejabat'); 
+                $q->where('status_pengajuan', 'menunggu_pejabat');
             })
             ->with('pengajuanSurat.mahasiswa.programStudi', 'pengajuanSurat.jenisSurat')
             ->get()
             ->filter(function ($approval) {
-                // Jika urutan pertama (1), selalu tampilkan.
                 if ($approval->urutan_approval == 1) {
                     return true;
                 }
 
-                // Jika bukan urutan pertama, cek status approval sebelumnya
                 $previousApprovalStatus = ApprovalPejabat::where('pengajuan_surat_id', $approval->pengajuan_surat_id)
-                                          ->where('urutan_approval', $approval->urutan_approval - 1)
-                                          ->value('status_approval');
-                
-                // Tampilkan hanya jika approval sebelumnya sudah 'disetujui'
+                    ->where('urutan_approval', $approval->urutan_approval - 1)
+                    ->value('status_approval');
+
                 return $previousApprovalStatus == 'disetujui';
             });
 
@@ -53,26 +48,20 @@ class ApprovalController extends Controller
      * Menampilkan detail surat untuk ditinjau pejabat.
      */
     public function show(ApprovalPejabat $approval): View
-{
-    // ---> INI BAGIAN YANG MENOLAK ANDA <---
-    // Cek: Apakah ID pejabat di approval ini SAMA DENGAN ID profil pejabat yang sedang login?
-    // Ganti !== menjadi !=
-if ((int)$approval->pejabat_id !== (int)Auth::user()?->pejabat?->id) {
-     abort(403, 'Akses Ditolak. Anda tidak ditugaskan untuk approval ini.');
-}
-    // ---> BATAS PENGECEKAN <---
+    {
+        if ((int)$approval->pejabat_id !== (int)Auth::user()?->pejabat?->id) {
+            abort(403, 'Akses Ditolak. Anda tidak ditugaskan untuk approval ini.');
+        }
 
-    // Jika sama, lanjutkan memuat data dan tampilkan view
-    $approval->load(['pengajuanSurat.mahasiswa.programStudi', 'pengajuanSurat.jenisSurat']);
-    return view('pejabat.approval.show', compact('approval'));
-}
+        $approval->load(['pengajuanSurat.mahasiswa.programStudi', 'pengajuanSurat.jenisSurat']);
+        return view('pejabat.approval.show', compact('approval'));
+    }
 
     /**
      * Memproses aksi Setuju atau Tolak.
      */
     public function approveOrReject(Request $request, ApprovalPejabat $approval): RedirectResponse
     {
-        // Otorisasi
         $this->authorizePejabat($approval);
 
         $request->validate([
@@ -90,15 +79,12 @@ if ((int)$approval->pejabat_id !== (int)Auth::user()?->pejabat?->id) {
                 'catatan_pejabat' => $request->catatan_pejabat,
             ]);
 
-            // Update surat utama
             $pengajuan->update([
                 'status_pengajuan' => 'ditolak',
                 'catatan_revisi' => "Ditolak oleh {$approval->pejabat->masterJabatan->nama_jabatan}: " . $request->catatan_pejabat,
             ]);
 
-            // TODO: Kirim notifikasi ke mahasiswa
             return redirect()->route('pejabat.approval.index')->with('success', 'Pengajuan telah ditolak.');
-
         } else {
             // Aksi Setuju
             $approval->update([
@@ -107,22 +93,39 @@ if ((int)$approval->pejabat_id !== (int)Auth::user()?->pejabat?->id) {
                 'catatan_pejabat' => $request->catatan_pejabat,
             ]);
 
+            // 1. Generate kode verifikasi unik untuk surat
+            $kodeVerifikasi = Str::random(10);
+
+            // 2. Buat URL verifikasi untuk surat dengan waktu approval
+            $waktuApproval = now()->format('Y-m-d H:i:s');
+$urlVerifikasi = 'https://stuporous-merilyn-gargantuan.ngrok-free.dev/verifikasi/'.$kodeVerifikasi.'?pengajuan_surat_id='.$approval->pengajuan_surat_id.'&pejabat_id='.$approval->pejabat_id;            // 3. Generate QR Code menggunakan simple-qrcode
+            $qrCode = QrCode::format('png')->size(200)->generate($urlVerifikasi);
+
+            // Tentukan path untuk menyimpan QR Code
+            $pathQr = 'qr/' . $approval->pejabat_id . '-' . $kodeVerifikasi . '.png';
+
+            // Menyimpan QR code ke public/storage folder
+            \Storage::disk('public')->put($pathQr, $qrCode); // Menyimpan ke storage public
+
+            // 4. Simpan QR code dan kode verifikasi di database
+            $approval->update([
+                'path_qr' => $pathQr,
+                'kode_verifikasi' => $kodeVerifikasi,
+                'tanggal_ttd' => now(),
+            ]);
+
             // Cek apakah ini approval terakhir
             $semuaApproval = $pengajuan->approvalPejabats()->count();
             $approvalDisetujui = $pengajuan->approvalPejabats()->where('status_approval', 'disetujui')->count();
 
             if ($semuaApproval == $approvalDisetujui) {
-                // INI ADALAH APPROVAL TERAKHIR
-                // Update status sementara (Job akan meng-update lagi nanti)
-                // $pengajuan->update(['status_pengajuan' => 'memproses_pdf']); 
-
-                // 🔥 MEMICU EVENT untuk generate PDF
+                // Ini adalah approval terakhir
+                // Memicu event untuk generate PDF
                 ApprovalSelesaiEvent::dispatch($pengajuan);
 
                 return redirect()->route('pejabat.approval.index')->with('success', 'Surat berhasil disetujui. PDF sedang digenerate.');
             } else {
                 // Masih ada level approval berikutnya
-                // TODO: Kirim notifikasi ke pejabat berikutnya
                 return redirect()->route('pejabat.approval.index')->with('success', 'Surat berhasil disetujui dan diteruskan ke level berikutnya.');
             }
         }

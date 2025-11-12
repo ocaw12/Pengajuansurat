@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,6 +9,8 @@ class ApprovalPejabat extends Model
     use HasFactory;
     
     protected $table = 'approval_pejabat';
+    
+    // Menambahkan kolom path_qr dan kode_verifikasi pada fillable
     protected $fillable = [
         'pengajuan_surat_id',
         'pejabat_id',
@@ -17,6 +18,8 @@ class ApprovalPejabat extends Model
         'status_approval',
         'tanggal_approval',
         'catatan_pejabat',
+        'path_qr',  // Kolom baru untuk menyimpan path QR code
+        'kode_verifikasi', // Kolom baru untuk kode verifikasi
     ];
 
     /**

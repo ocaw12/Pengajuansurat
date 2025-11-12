@@ -57,10 +57,18 @@
                         <h4 class="alert-heading">Surat Selesai!</h4>
                         <p>Surat Anda telah disetujui dan siap diunduh.</p>
                         
-                        <!-- INI BAGIAN YANG DIPERBAIKI -->
-                        <a href="{{ Storage::url($pengajuan->file_hasil_pdf) }}" target="_blank" class="btn btn-primary">
-                            <i class="bi bi-download me-2"></i> Download PDF
-                        </a>
+                       <a href="{{ route('preview.surat', basename($pengajuan->file_hasil_pdf)) }}" 
+   target="_blank" 
+   class="btn btn-secondary">
+   <i class="bi bi-eye me-2"></i> Preview PDF
+</a>
+
+<a href="{{ route('download.surat', basename($pengajuan->file_hasil_pdf)) }}" 
+   class="btn btn-primary">
+   <i class="bi bi-download me-2"></i> Download PDF
+</a>
+
+
                     </div>
                 @elseif($pengajuan->status_pengajuan == 'siap_diambil')
                     <div class="alert alert-info">

@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\AdminAkademik;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\MasterJabatanRequest;
+use App\Http\Requests\AdminAkademik\MasterJabatanRequest;
 use App\Models\MasterJabatan;
 
 class MasterJabatanController extends Controller
@@ -21,7 +21,7 @@ class MasterJabatanController extends Controller
     public function store(MasterJabatanRequest $request)
     {
         MasterJabatan::create($request->validated());
-        return redirect()->route('admin_akademik.masterjabatan.index')->with('success', 'Jabatan berhasil ditambahkan');
+        return redirect()->route('admin_akademik.master-jabatan.index')->with('success', 'Jabatan berhasil ditambahkan');
     }
 
     public function edit($id)
@@ -34,13 +34,13 @@ class MasterJabatanController extends Controller
     {
         $jabatan = MasterJabatan::findOrFail($id);
         $jabatan->update($request->validated());
-        return redirect()->route('admin_akademik.masterjabatan.index')->with('success', 'Jabatan berhasil diperbarui');
+        return redirect()->route('admin_akademik.master-jabatan.index')->with('success', 'Jabatan berhasil diperbarui');
     }
 
     public function destroy($id)
     {
         $jabatan = MasterJabatan::findOrFail($id);
         $jabatan->delete();
-        return redirect()->route('admin_akademik.masterjabatan.index')->with('success', 'Jabatan berhasil dihapus');
+        return redirect()->route('admin_akademik.master-jabatan.index')->with('success', 'Jabatan berhasil dihapus');
     }
 }

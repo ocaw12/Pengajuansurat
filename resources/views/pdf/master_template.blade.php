@@ -82,23 +82,20 @@
 
     <!-- 4. AREA TANDA TANGAN (LOOPING) -->
     <!-- Loop ini akan menampilkan TTD berdasarkan urutan approval -->
-    @foreach($pejabat_approvals->sortBy('urutan_approval') as $approval)
-    <div class="area-ttd">
-        <p>Yogyakarta, {{ $tanggal_terbit }}</p>
-        <p>{{ $approval->pejabat->masterJabatan->nama_jabatan }},</p>
-        
-        @if($approval->pejabat->tanda_tangan_path)
-            <!-- TTD Gambar (Jika ada) -->
-            <img src="{{ storage_path('app/' . $approval->pejabat->tanda_tangan_path) }}" class="ttd-gambar">
-        @else
-            <!-- Placeholder jika TTD tidak ada -->
-            <div style="height: 80px; text-align: center; border: 1px dashed #ccc; padding-top: 30px;">[TTD Digital]</div>
-        @endif
-        
-        <p style="font-weight: bold; margin-top: 5px; text-decoration: underline;">{{ $approval->pejabat->nama_lengkap }}</p>
-        <p style="margin-top: -10px;">NIP/NIDN: {{ $approval->pejabat->nip_atau_nidn }}</p>
-    </div>
-    @endforeach
+    <!-- Loop untuk menampilkan tanda tangan pejabat dan QR Code -->
+@foreach($pejabat_approvals->sortBy('urutan_approval') as $approval)
+<div class="area-ttd">
+    <p>Yogyakarta, {{ $tanggal_terbit }}</p>
+    <p>{{ $approval->pejabat->masterJabatan->nama_jabatan }},</p>
+    
+    <!-- Menampilkan QR Code untuk tiap pejabat -->
+    <img src="{{ storage_path('app/public/' . $approval->path_qr) }}" class="ttd-gambar" width="100">
+
+    <p style="font-weight: bold; margin-top: 5px; text-decoration: underline;">{{ $approval->pejabat->nama_lengkap }}</p>
+    <p style="margin-top: -10px;">NIP/NIDN: {{ $approval->pejabat->nip_atau_nidn }}</p>
+</div>
+@endforeach
+
 
 </body>
 </html>
