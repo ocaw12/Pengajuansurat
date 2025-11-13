@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Notifications\Notifiable; // <-- Tambahkan ini
 
 
 class Mahasiswa extends Model
 {
-    use HasFactory;
-
+    use HasFactory, Notifiable; // <-- Tambahkan Notifiable
     protected $table = 'mahasiswa';
 
     protected $fillable = [
@@ -25,6 +25,7 @@ class Mahasiswa extends Model
         'tanggal_lahir',
         'alamat',
         'jenis_kelamin',
+        'no_telepon',
     ];
 
     protected $casts = [
@@ -44,6 +45,29 @@ class Mahasiswa extends Model
     public function pengajuanSurats(): HasMany
     {
         return $this->hasMany(PengajuanSurat::class, 'mahasiswa_id');
+    }
+
+    public function routeNotificationForFonnte($notification)
+    {
+        if (empty($this->no_telepon)) {
+            return null;
+        }
+
+        // Hapus karakter non-numerik
+        $nomor = preg_replace('/[^0-9]/', '', $this->no_telepon);
+
+        // Ubah awalan 0 menjadi 62
+        if (str_starts_with($nomor, '0')) {
+            return '62' . substr($nomor, 1);
+        }
+        
+        // Jika sudah 62, langsung kembalikan
+        if (str_starts_with($nomor, '62')) {
+            return $nomor;
+        }
+
+        // Kembalikan null jika format tidak dikenal
+        return null;
     }
 }
 

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('nip_staff', 50)->nullable();
             $table->string('nama_lengkap', 255);
             $table->foreignId('program_studi_id')->constrained('program_studi')->cascadeOnDelete();
+            $table->string('no_telepon', 255)->nullable()->comment('Untuk Notifikasi WA');
             $table->timestamps();
         });
     }

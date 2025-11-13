@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('status_approval', 20)->default('menunggu')->comment('menunggu, disetujui, ditolak');
             $table->dateTime('tanggal_approval')->nullable();
             $table->text('catatan_pejabat')->nullable();
+            $table->string('path_qr')->nullable()->comment('Path ke file gambar QR Code verifikasi');
+            $table->string('kode_verifikasi')->nullable()->comment('Kode unik untuk verifikasi URL');
             $table->timestamps();
 
             $table->unique(['pengajuan_surat_id', 'pejabat_id']);

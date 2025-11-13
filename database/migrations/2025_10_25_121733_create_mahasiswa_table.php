@@ -22,6 +22,7 @@ return new class extends Migration
             $table->date('tanggal_lahir')->nullable();
             $table->text('alamat')->nullable();
             $table->enum('jenis_kelamin', ['Laki_laki', 'Perempuan'])->nullable();
+            $table->string('no_telepon', 255)->nullable()->comment('Untuk Notifikasi WA');
             // Enum jenis_kelamin perlu dibuat di DB Diagram atau didefinisikan di sini
 
             $table->foreignId('program_studi_id')->constrained('program_studi')->cascadeOnDelete();

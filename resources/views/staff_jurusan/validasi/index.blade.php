@@ -34,7 +34,7 @@
                             </span>
                         </td>
                         <td>
-                            <a href="{{ route('staff.validasi.show', $pengajuan) }}" class="btn btn-primary btn-sm">
+                            <a href="{{ route('staff_jurusan.validasi.show', $pengajuan) }}" class="btn btn-primary btn-sm">
                                 <i class="bi bi-search me-1"></i> Periksa
                             </a>
                         </td>

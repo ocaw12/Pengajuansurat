@@ -18,8 +18,8 @@ class ApprovalPejabat extends Model
         'status_approval',
         'tanggal_approval',
         'catatan_pejabat',
-        'path_qr',  // Kolom baru untuk menyimpan path QR code
-        'kode_verifikasi', // Kolom baru untuk kode verifikasi
+        'path_qr', // <-- Tambahkan ini
+        'kode_verifikasi', // <-- Tambahkan ini
     ];
 
     /**

@@ -52,7 +52,7 @@
             </div>
             <div class="card-body">
                 <p>Periksa kelengkapan data. Jika sudah sesuai, teruskan ke pejabat. Jika tidak, tolak atau minta revisi.</p>
-                <form action="{{ route('staff.validasi.submit', $pengajuan) }}" method="POST">
+                <form action="{{ route('staff_jurusan.validasi.submit', $pengajuan) }}" method="POST">
                     @csrf
                     
                     <div class="mb-3">

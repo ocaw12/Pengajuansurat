@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->unique()->constrained('users')->cascadeOnDelete();
             $table->string('nip_akademik', 50)->nullable();
             $table->string('nama_lengkap', 255);
+            $table->string('no_telepon', 255)->nullable()->comment('Untuk Notifikasi WA');
             $table->timestamps();
         });
     }

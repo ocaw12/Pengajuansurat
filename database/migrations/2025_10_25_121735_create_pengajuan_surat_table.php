@@ -27,9 +27,11 @@ return new class extends Migration
                 'menunggu_pejabat',
                 'perlu_revisi',
                 'ditolak',
-                'selesai', // Untuk digital
-                'siap_diambil', // Untuk cetak
-                'sudah_diambil' // Untuk cetak yang sudah diambil
+                'selesai', 
+                'siap_dicetak', // <-- TAMBAHKAN INI
+                'siap_diambil', 
+                'sudah_diambil',
+                'gagal_generate'
             ])->default('pending');
 
             $table->string('file_hasil_pdf', 255)->nullable();

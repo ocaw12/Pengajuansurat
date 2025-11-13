@@ -12,6 +12,7 @@ use App\Http\Controllers\Mahasiswa\PengajuanController;
 // --- CONTROLLER STAFF JURUSAN ---
 use App\Http\Controllers\StaffJurusan\DashboardController as StaffDashboard;
 use App\Http\Controllers\StaffJurusan\ValidasiController;
+use App\Http\Controllers\StaffJurusan\CetakController; // <-- Pastikan ini di-import
 
 // --- CONTROLLER PEJABAT ---
 use App\Http\Controllers\Pejabat\DashboardController as PejabatDashboard;
@@ -95,28 +96,28 @@ Route::middleware(['auth'])->group(function () {
     | 🧑‍💼 GRUP STAFF JURUSAN
     |--------------------------------------------------------------------------
     */
-     Route::middleware('role:staff jurusan')
-         ->prefix('staff')
-         ->name('staff.')
+    Route::middleware(['role:staff jurusan'])
+         ->prefix('staff-jurusan') 
+         ->name('staff_jurusan.') 
          ->group(function () {
         
-        Route::get('/dashboard', [StaffDashboard::class, 'index'])->name('dashboard'); // Antrian validasi
+        // Dashboard staff = halaman antrian validasi
+        Route::get('/dashboard', [ValidasiController::class, 'index'])->name('dashboard'); 
+        
+        // Rute untuk validasi
+        Route::get('/validasi', [ValidasiController::class, 'index'])->name('validasi.index');
+        Route::get('/validasi/{pengajuan}', [ValidasiController::class, 'show'])->name('validasi.show');
+        Route::post('/validasi/{pengajuan}', [ValidasiController::class, 'validateSubmission'])->name('validasi.submit');
+        
+        // Rute untuk fitur cetak (menggunakan ValidasiController)
+        Route::get('/perlu-dicetak', [ValidasiController::class, 'indexCetak'])->name('cetak.index'); // <-- Antrian Perlu Cetak
+        Route::post('/tandai-siap-diambil/{pengajuan}', [ValidasiController::class, 'tandaiSiapDiambil'])->name('cetak.siapDiambil'); // <-- Aksi kirim WA
+        
+        Route::get('/antrian-pengambilan', [ValidasiController::class, 'indexPengambilan'])->name('cetak.pengambilan'); // <-- Antrian Siap Diambil
+        Route::post('/tandai-sudah-diambil/{pengajuan}', [ValidasiController::class, 'markAsDiambil'])->name('cetak.diambil'); // <-- Aksi Selesai
+    });
 
-        // web.php (Perbaikan)
-Route::get('/validasi/{pengajuan}', [ValidasiController::class, 'show'])->name('validasi.show');
-Route::post('/validasi/{pengajuan}', [ValidasiController::class, 'validateSubmission'])->name('validasi.submit');
-Route::get('/validasi', [ValidasiController::class, 'index'])->name('validasi.index');
-Route::get('/cetak', [ValidasiController::class, 'index'])->name('cetak.index');
 
-Route::post('/tandai-diambil/{pengajuan}', [ValidasiController::class, 'markAsDiambil'])->name('validasi.diambil');
-
-        // Ganti 'antrianCetak' menjadi 'indexCetak'
-        Route::get('/antrian-cetak', [ValidasiController::class, 'indexCetak'])->name('validasi.cetak');
-
-        // Ganti 'tandaiDiambil' menjadi 'markAsDiambil'
-        Route::post('/tandai-diambil/{pengajuan}', [ValidasiController::class, 'markAsDiambil'])->name('validasi.diambil');
-
-        });
 
     /*
     |--------------------------------------------------------------------------

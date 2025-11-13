@@ -262,25 +262,21 @@
                 @elseif($role === 'staff jurusan')
                     {{-- == MENU STAFF JURUSAN == --}}
                     <li class="nav-item">
-                        <a href="{{ route('staff.validasi.index') }}" class="nav-link {{ request()->routeIs('staff_jurusan.validasi.*') ? 'active' : '' }}">
-                            <i class="bi bi-clipboard-check"></i><span>Antrian Validasi</span>
-                        </a>
-                    </li>
-                     <li class="nav-item">
-                        <a href="{{ route('staff.cetak.index') }}" class="nav-link {{ request()->routeIs('staff_jurusan.cetak.*') ? 'active' : '' }}">
-                            <i class="bi bi-printer"></i><span>Antrian Cetak</span>
-                        </a>
-                    </li>
-                     <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('staff_jurusan.arsip.*') ? 'active' : '' --}}">
-                            <i class="bi bi-archive"></i><span>Arsip Surat Prodi</span>
-                        </a>
-                    </li>
-                     <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('profile.edit') ? 'active' : '' --}}">
-                            <i class="bi bi-person-circle"></i><span>Profil Saya</span>
-                        </a>
-                    </li>
+                    <a href="{{ route('staff_jurusan.validasi.index') }}" class="nav-link {{ request()->routeIs('staff_jurusan.validasi.*') ? 'active' : '' }}">
+                        <i class="bi bi-clipboard-check"></i><span>Antrian Validasi</span>
+                    </a>
+                </li>
+                 <li class="nav-item">
+                    <a href="{{ route('staff_jurusan.cetak.index') }}" class="nav-link {{ request()->routeIs('staff_jurusan.cetak.index') ? 'active' : '' }}">
+                        <i class="bi bi-printer"></i><span>Perlu Dicetak</span>
+                    </a>
+                </li>
+                 <li class="nav-item">
+                    <a href="{{ route('staff_jurusan.cetak.pengambilan') }}" class="nav-link {{ request()->routeIs('staff_jurusan.cetak.pengambilan') ? 'active' : '' }}">
+                        <i class="bi bi-person-check"></i><span>Antrian Pengambilan</span>
+                    </a>
+                </li>
+
 
                 @elseif($role === 'pejabat')
                      {{-- == MENU PEJABAT == --}}
