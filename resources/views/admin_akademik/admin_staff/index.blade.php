@@ -6,8 +6,6 @@
 <div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Daftar Staff</h1>
 
-   
-
     <div class="mb-3">
         <a href="{{ route('admin_akademik.admin-staff.create') }}" class="btn btn-primary">
             <i class="bi bi-person-plus"></i> Tambah Staff
@@ -23,6 +21,7 @@
                         <th>NIP Staff</th>
                         <th>Nama Lengkap</th>
                         <th>Program Studi</th>
+                        <th>No. Telepon</th>   <!-- ⬅️ DITAMBAHKAN -->
                         <th>Email</th>
                         <th>Aksi</th>
                     </tr>
@@ -34,6 +33,7 @@
                             <td>{{ $staff->nip_staff }}</td>
                             <td>{{ $staff->nama_lengkap }}</td>
                             <td>{{ $staff->programStudi->nama_prodi }}</td>
+                            <td>{{ $staff->no_telepon ?? '-' }}</td>   <!-- ⬅️ DITAMBAHKAN -->
                             <td>{{ $staff->user->email }}</td>
                             <td>
                                 <a href="{{ route('admin_akademik.admin-staff.edit', $staff->id) }}" class="btn btn-warning btn-sm">

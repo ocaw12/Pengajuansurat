@@ -18,6 +18,7 @@ class Pejabat extends Model
         'master_jabatan_id',
         'fakultas_id',
         'program_studi_id',
+         'no_telepon',
     ];
 
     /**

@@ -10,6 +10,7 @@
         @csrf
         <div class="card">
             <div class="card-body">
+                
                 <div class="mb-3">
                     <label for="nip_staff" class="form-label">NIP Staff</label>
                     <input type="text" class="form-control" id="nip_staff" name="nip_staff" value="{{ old('nip_staff') }}" required>
@@ -26,12 +27,29 @@
                     @enderror
                 </div>
 
+                <!-- No Telepon -->
+                <div class="mb-3">
+                    <label for="no_telepon" class="form-label">No. Telepon</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="no_telepon"
+                        name="no_telepon"
+                        value="{{ old('no_telepon') }}"
+                        placeholder="Contoh: 081234567890">
+                    @error('no_telepon')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+
                 <div class="mb-3">
                     <label for="program_studi_id" class="form-label">Program Studi</label>
                     <select class="form-control select2" id="program_studi_id" name="program_studi_id" required>
                         <option value="">Pilih Program Studi</option>
                         @foreach($program_studis as $programStudi)
-                            <option value="{{ $programStudi->id }}" {{ old('program_studi_id') == $programStudi->id ? 'selected' : '' }}>{{ $programStudi->nama_prodi }}</option>
+                            <option value="{{ $programStudi->id }}" {{ old('program_studi_id') == $programStudi->id ? 'selected' : '' }}>
+                                {{ $programStudi->nama_prodi }}
+                            </option>
                         @endforeach
                     </select>
                     @error('program_studi_id')
@@ -39,7 +57,6 @@
                     @enderror
                 </div>
                 
-
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required>
@@ -51,6 +68,7 @@
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-person-plus"></i> Tambah Staff
                 </button>
+
             </div>
         </div>
     </form>

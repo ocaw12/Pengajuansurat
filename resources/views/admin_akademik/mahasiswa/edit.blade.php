@@ -5,9 +5,11 @@
 @section('content')
 <div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Edit Mahasiswa</h1>
-<form action="{{ route('admin_akademik.mahasiswa.update', $mahasiswa->id) }}" method="POST">
-    @csrf
-    @method('PUT')
+
+    <form action="{{ route('admin_akademik.mahasiswa.update', $mahasiswa->id) }}" method="POST">
+        @csrf
+        @method('PUT')
+
         <div class="card">
             <div class="card-body">
 
@@ -52,6 +54,21 @@
                     <label for="alamat" class="form-label">Alamat</label>
                     <input type="text" class="form-control" id="alamat" name="alamat" value="{{ old('alamat', $mahasiswa->alamat) }}" required>
                     @error('alamat')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Input No Telepon -->
+                <div class="mb-3">
+                    <label for="no_telepon" class="form-label">No. Telepon</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="no_telepon"
+                        name="no_telepon"
+                        value="{{ old('no_telepon', $mahasiswa->no_telepon) }}"
+                        placeholder="Contoh: 081234567890">
+                    @error('no_telepon')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
@@ -106,6 +123,7 @@
                 <button type="submit" class="btn btn-warning">
                     <i class="bi bi-pencil-square"></i> Update Mahasiswa
                 </button>
+
             </div>
         </div>
     </form>

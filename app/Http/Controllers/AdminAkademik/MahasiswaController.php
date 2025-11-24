@@ -31,15 +31,16 @@ class MahasiswaController extends Controller
 
         // Menyimpan data ke tabel mahasiswa
         $mahasiswa = Mahasiswa::create([
-            'nim' => $request->nim,
-            'nama_lengkap' => $request->nama_lengkap,
-            'tempat_lahir' => $request->tempat_lahir,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'alamat' => $request->alamat,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'angkatan' => $request->angkatan,
-            'program_studi_id' => $request->program_studi_id,
-            'user_id' => $user->id, // Menyimpan ID user yang baru saja dibuat
+            'nim'             => $request->nim,
+            'nama_lengkap'    => $request->nama_lengkap,
+            'tempat_lahir'    => $request->tempat_lahir,
+            'tanggal_lahir'   => $request->tanggal_lahir,
+            'alamat'          => $request->alamat,
+            'jenis_kelamin'   => $request->jenis_kelamin,
+            'angkatan'        => $request->angkatan,
+            'program_studi_id'=> $request->program_studi_id,
+            'no_telepon'      => $request->no_telepon, // ⬅️ DITAMBAHKAN
+            'user_id'         => $user->id, // Menyimpan ID user yang baru saja dibuat
         ]);
 
         return redirect()->route('admin_akademik.mahasiswa.index')->with('success', 'Data mahasiswa berhasil ditambahkan!');
@@ -68,14 +69,15 @@ class MahasiswaController extends Controller
 
         // Update data mahasiswa
         $mahasiswa->update([
-            'nim' => $request->nim,
-            'nama_lengkap' => $request->nama_lengkap,
-            'tempat_lahir' => $request->tempat_lahir,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'alamat' => $request->alamat,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'angkatan' => $request->angkatan,
-            'program_studi_id' => $request->program_studi_id,
+            'nim'             => $request->nim,
+            'nama_lengkap'    => $request->nama_lengkap,
+            'tempat_lahir'    => $request->tempat_lahir,
+            'tanggal_lahir'   => $request->tanggal_lahir,
+            'alamat'          => $request->alamat,
+            'jenis_kelamin'   => $request->jenis_kelamin,
+            'angkatan'        => $request->angkatan,
+            'program_studi_id'=> $request->program_studi_id,
+            'no_telepon'      => $request->no_telepon, // ⬅️ DITAMBAHKAN
         ]);
 
         // Update data user yang terkait

@@ -26,21 +26,24 @@ class AdminStaffController extends Controller
 
         // Menyimpan data ke tabel users terlebih dahulu (karena user_id diperlukan di admin_staff)
         $user = User::create([
-            'email' => $request->email,
+            'email'    => $request->email,
             'password' => Hash::make($request->nip_staff), // Password sama dengan NIP
-            'role_id' => 2, // Pastikan ini adalah ID role untuk admin_staff
+            'role_id'  => 2, // Pastikan ini adalah ID role untuk admin_staff
         ]);
 
         // Menyimpan data ke tabel admin_staff
         $adminStaff = AdminStaff::create([
-            'nip_staff' => $request->nip_staff,
-            'nama_lengkap' => $request->nama_lengkap,
+            'nip_staff'        => $request->nip_staff,
+            'nama_lengkap'     => $request->nama_lengkap,
             'program_studi_id' => $request->program_studi_id,
-            'user_id' => $user->id, // Menyimpan ID user yang baru saja dibuat
+            'no_telepon'       => $request->no_telepon,  // ⬅️ DITAMBAHKAN
+            'user_id'          => $user->id, // Menyimpan ID user yang baru saja dibuat
         ]);
 
         // Redirect ke halaman daftar staff
-        return redirect()->route('admin_akademik.admin-staff.index')->with('success', 'Data staff berhasil ditambahkan!');
+        return redirect()
+            ->route('admin_akademik.admin-staff.index')
+            ->with('success', 'Data staff berhasil ditambahkan!');
     }
 
     // Menampilkan daftar staff
@@ -73,9 +76,10 @@ class AdminStaffController extends Controller
 
         // Update data admin staff
         $adminStaff->update([
-            'nip_staff' => $request->nip_staff,
-            'nama_lengkap' => $request->nama_lengkap,
+            'nip_staff'        => $request->nip_staff,
+            'nama_lengkap'     => $request->nama_lengkap,
             'program_studi_id' => $request->program_studi_id,
+            'no_telepon'       => $request->no_telepon, // ⬅️ DITAMBAHKAN
         ]);
 
         // Update data user yang terkait
@@ -90,7 +94,9 @@ class AdminStaffController extends Controller
             ]);
         }
 
-        return redirect()->route('admin_akademik.admin-staff.index')->with('success', 'Data staff berhasil diperbarui!');
+        return redirect()
+            ->route('admin_akademik.admin-staff.index')
+            ->with('success', 'Data staff berhasil diperbarui!');
     }
 
     // Menghapus data staff
@@ -106,6 +112,8 @@ class AdminStaffController extends Controller
         $adminStaff->delete();
 
         // Redirect ke halaman daftar staff dengan pesan sukses
-        return redirect()->route('admin_akademik.admin-staff.index')->with('success', 'Data staff berhasil dihapus!');
+        return redirect()
+            ->route('admin_akademik.admin-staff.index')
+            ->with('success', 'Data staff berhasil dihapus!');
     }
 }

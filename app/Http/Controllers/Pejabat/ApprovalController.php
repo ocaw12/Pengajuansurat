@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 class ApprovalController extends Controller
 {
     /**
-     * Menampilkan daftar surat yang menunggu approval pejabat ini.
+     * Menampilkan daftar surat yang menunggu approval pejabat ini (ANTRIAN).
      */
     public function index(): View
     {
@@ -41,7 +41,26 @@ class ApprovalController extends Controller
                 return $previousApprovalStatus == 'disetujui';
             });
 
-        return view('pejabat.approval.index', compact('antrians'));
+        return view('pejabat.approval.antrian', compact('antrians'));
+    }
+
+    /**
+     * Menampilkan RIWAYAT approval pejabat (sudah disetujui / ditolak).
+     */
+    public function riwayat(): View
+    {
+        $pejabatId = Auth::user()->pejabat->id;
+
+        $riwayats = ApprovalPejabat::where('pejabat_id', $pejabatId)
+            ->whereIn('status_approval', ['disetujui', 'ditolak']) // riwayat = yg sudah diproses
+            ->with([
+                'pengajuanSurat.mahasiswa.programStudi',
+                'pengajuanSurat.jenisSurat',
+            ])
+            ->orderByDesc('tanggal_approval') // pakai tanggal_approval biar urut
+            ->get();
+
+        return view('pejabat.approval.riwayat', compact('riwayats'));
     }
 
     /**
@@ -84,7 +103,7 @@ class ApprovalController extends Controller
                 'catatan_revisi' => "Ditolak oleh {$approval->pejabat->masterJabatan->nama_jabatan}: " . $request->catatan_pejabat,
             ]);
 
-            return redirect()->route('pejabat.approval.index')->with('success', 'Pengajuan telah ditolak.');
+            return redirect()->route('pejabat.approval.antrian')->with('success', 'Pengajuan telah ditolak.');
         } else {
             // Aksi Setuju
             $approval->update([
@@ -98,7 +117,9 @@ class ApprovalController extends Controller
 
             // 2. Buat URL verifikasi untuk surat dengan waktu approval
             $waktuApproval = now()->format('Y-m-d H:i:s');
-            $urlVerifikasi = 'http://192.168.18.14:8000/verifikasi/'.$kodeVerifikasi.'?pengajuan_surat_id='.$approval->pengajuan_surat_id.'&pejabat_id='.$approval->pejabat_id;            // 3. Generate QR Code menggunakan simple-qrcode
+            $urlVerifikasi = 'http://192.168.18.14:8000/verifikasi/'.$kodeVerifikasi.'?pengajuan_surat_id='.$approval->pengajuan_surat_id.'&pejabat_id='.$approval->pejabat_id;
+
+            // 3. Generate QR Code menggunakan simple-qrcode
             $qrCode = QrCode::format('png')->size(200)->generate($urlVerifikasi);
 
             // Tentukan path untuk menyimpan QR Code
@@ -123,10 +144,10 @@ class ApprovalController extends Controller
                 // Memicu event untuk generate PDF
                 ApprovalSelesaiEvent::dispatch($pengajuan);
 
-                return redirect()->route('pejabat.approval.index')->with('success', 'Surat berhasil disetujui. PDF sedang digenerate.');
+                return redirect()->route('pejabat.approval.antrian')->with('success', 'Surat berhasil disetujui. PDF sedang digenerate.');
             } else {
                 // Masih ada level approval berikutnya
-                return redirect()->route('pejabat.approval.index')->with('success', 'Surat berhasil disetujui dan diteruskan ke level berikutnya.');
+                return redirect()->route('pejabat.approval.antrian')->with('success', 'Surat berhasil disetujui dan diteruskan ke level berikutnya.');
             }
         }
     }

@@ -26,6 +26,8 @@ class UpdateMahasiswaRequest extends FormRequest
             'jenis_kelamin' => 'required|in:Laki_laki,Perempuan', // Validasi jenis kelamin
             'angkatan' => 'required|integer|min:2000|max:'.(date('Y')+1), // Validasi angkatan
             'program_studi_id' => 'required|exists:program_studi,id',
+            'no_telepon' => 'nullable|string|max:20',
+
             'email' => 'required|email|unique:users,email,' . $userId, // Validasi email dengan pengecualian untuk mahasiswa yang sedang diedit
         ];
     }

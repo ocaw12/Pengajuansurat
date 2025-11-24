@@ -3,24 +3,36 @@
 namespace App\Http\Controllers\Mahasiswa;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\PengajuanSurat;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    /**
-     * Menampilkan riwayat pengajuan surat mahasiswa.
-     */
     public function index(): View
     {
-        $mahasiswaId = Auth::user()->mahasiswa->id;
-        
-        $pengajuan_surats = \App\Models\PengajuanSurat::where('mahasiswa_id', $mahasiswaId)
-            ->with('jenisSurat') // Eager load relasi
-            ->latest('tanggal_pengajuan') // Urutkan berdasarkan terbaru
+        $mahasiswa = Auth::user()->mahasiswa;
+
+        // Query dasar
+        $query = PengajuanSurat::where('mahasiswa_id', $mahasiswa->id);
+
+        // Angka ringkasan dashboard
+        $totalPengajuan = $query->count();
+        $totalSelesai   = (clone $query)->where('status_pengajuan', 'selesai')->count();
+        $totalDitolak   = (clone $query)->whereIn('status_pengajuan', ['ditolak', 'perlu_revisi'])->count();
+
+        // Pengajuan terbaru
+        $pengajuanTerbaru = (clone $query)
+            ->latest('tanggal_pengajuan')
+            ->take(5)
             ->get();
 
-        return view('mahasiswa.dashboard', compact('pengajuan_surats'));
+        // KIRIM SEMUA VARIABEL KE VIEW
+        return view('mahasiswa.dashboard', compact(
+            'totalPengajuan',
+            'totalSelesai',
+            'totalDitolak',
+            'pengajuanTerbaru'
+        ));
     }
 }

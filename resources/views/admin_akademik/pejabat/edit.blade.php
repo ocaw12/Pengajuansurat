@@ -8,26 +8,60 @@
     <form action="{{ route('admin_akademik.pejabat.update', $pejabat->id) }}" method="POST">
         @csrf
         @method('PUT')
+
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" class="form-control" name="email" value="{{ $pejabat->user->email }}" required>
+            <input
+                type="email"
+                class="form-control"
+                name="email"
+                value="{{ old('email', $pejabat->user->email) }}"
+                required
+            >
         </div>
 
         <div class="form-group">
             <label for="nip_atau_nidn">NIP/NIDN</label>
-            <input type="text" class="form-control" name="nip_atau_nidn" value="{{ $pejabat->nip_atau_nidn }}" required>
+            <input
+                type="text"
+                class="form-control"
+                name="nip_atau_nidn"
+                value="{{ old('nip_atau_nidn', $pejabat->nip_atau_nidn) }}"
+                required
+            >
         </div>
 
         <div class="form-group">
             <label for="nama_lengkap">Nama Lengkap</label>
-            <input type="text" class="form-control" name="nama_lengkap" value="{{ $pejabat->nama_lengkap }}" required>
+            <input
+                type="text"
+                class="form-control"
+                name="nama_lengkap"
+                value="{{ old('nama_lengkap', $pejabat->nama_lengkap) }}"
+                required
+            >
+        </div>
+
+        {{-- No Telepon --}}
+        <div class="form-group">
+            <label for="no_telepon">No. Telepon</label>
+            <input
+                type="text"
+                class="form-control"
+                name="no_telepon"
+                value="{{ old('no_telepon', $pejabat->no_telepon) }}"
+                placeholder="Contoh: 081234567890"
+            >
         </div>
 
         <div class="form-group">
             <label for="jabatan">Jabatan</label>
             <select name="jabatan" class="form-control" id="jabatan" required>
                 @foreach ($masterJabatan as $jabatan)
-                    <option value="{{ $jabatan->id }}" {{ $pejabat->master_jabatan_id == $jabatan->id ? 'selected' : '' }}>
+                    <option
+                        value="{{ $jabatan->id }}"
+                        {{ old('jabatan', $pejabat->master_jabatan_id) == $jabatan->id ? 'selected' : '' }}
+                    >
                         {{ $jabatan->nama_jabatan }}
                     </option>
                 @endforeach
@@ -37,9 +71,13 @@
         <div class="form-group" id="fakultas" style="display: none;">
             <label for="fakultas_id">Fakultas</label>
             <select name="fakultas_id" class="form-control">
-                @foreach ($fakultas as $fakultas)
-                    <option value="{{ $fakultas->id }}" {{ $pejabat->fakultas_id == $fakultas->id ? 'selected' : '' }}>
-                        {{ $fakultas->nama_fakultas }}
+                <option value="">Pilih Fakultas</option>
+                @foreach ($fakultas as $f)
+                    <option
+                        value="{{ $f->id }}"
+                        {{ old('fakultas_id', $pejabat->fakultas_id) == $f->id ? 'selected' : '' }}
+                    >
+                        {{ $f->nama_fakultas }}
                     </option>
                 @endforeach
             </select>
@@ -48,9 +86,13 @@
         <div class="form-group" id="program_studi" style="display: none;">
             <label for="program_studi_id">Program Studi</label>
             <select name="program_studi_id" class="form-control">
+                <option value="">Pilih Program Studi</option>
                 @foreach ($programStudi as $program)
-                    <option value="{{ $program->id }}" {{ $pejabat->program_studi_id == $program->id ? 'selected' : '' }}>
-                        {{ $program->nama_program_studi }}
+                    <option
+                        value="{{ $program->id }}"
+                        {{ old('program_studi_id', $pejabat->program_studi_id) == $program->id ? 'selected' : '' }}
+                    >
+                        {{ $program->nama_prodi }}
                     </option>
                 @endforeach
             </select>
@@ -62,7 +104,7 @@
             <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah password.</small>
         </div>
 
-        <button type="submit" class="btn btn-primary">Update</button>
+        <button type="submit" class="btn btn-primary mt-2">Update</button>
     </form>
 
     <script>

@@ -242,11 +242,23 @@
 
                 @if($role === 'mahasiswa')
                     {{-- == MENU MAHASISWA == --}}
-                    <li class="nav-item">
-                        <a href="{{ route('mahasiswa.dashboard') }}" class="nav-link {{ request()->routeIs('mahasiswa.dashboard') ? 'active' : '' }}">
-                            <i class="bi bi-clock-history"></i><span>Riwayat Pengajuan</span>
-                        </a>
-                    </li>
+                    <li class="nav-heading"><span>Utama</span></li>
+
+    <li class="nav-item">
+        <a href="{{ route('mahasiswa.dashboard') }}"
+           class="nav-link {{ request()->routeIs('mahasiswa.dashboard') ? 'active' : '' }}">
+            <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+        </a>
+    </li>
+
+  <li class="nav-item">
+        <a href="{{ route('mahasiswa.riwayat.index') }}"
+           class="nav-link {{ request()->routeIs('mahasiswa.riwayat.*') ? 'active' : '' }}">
+            <i class="bi bi-clock-history"></i><span>Riwayat Pengajuan</span>
+        </a>
+    </li>
+                                        </li>
+
                     <li class="nav-item">
                         <a href="{{ route('mahasiswa.pengajuan.create') }}" class="nav-link {{ request()->routeIs('mahasiswa.pengajuan.*') ? 'active' : '' }}"> {{-- Match create and show --}}
                             <i class="bi bi-file-earmark-plus"></i><span>Buat Pengajuan Baru</span>
@@ -261,11 +273,21 @@
 
                 @elseif($role === 'staff jurusan')
                     {{-- == MENU STAFF JURUSAN == --}}
+                    </li>
+                    <li class="nav-heading"><span>Utama</span></li>
+                    <li class="nav-item">
+                    <a href="{{ route('staff_jurusan.dashboard') }}" class="nav-link {{ request()->routeIs('staff_jurusan.dashboard') ? 'active' : '' }}">
+                        <i class="bi bi-speedometer2 me-2"></i><span>Dashboard</span>
+                    </a>
+                </li>
+                 </li>
+                    <li class="nav-heading"><span>Utama</span></li>
                     <li class="nav-item">
                     <a href="{{ route('staff_jurusan.validasi.index') }}" class="nav-link {{ request()->routeIs('staff_jurusan.validasi.*') ? 'active' : '' }}">
                         <i class="bi bi-clipboard-check"></i><span>Antrian Validasi</span>
                     </a>
                 </li>
+                 </li>
                  <li class="nav-item">
                     <a href="{{ route('staff_jurusan.cetak.index') }}" class="nav-link {{ request()->routeIs('staff_jurusan.cetak.index') ? 'active' : '' }}">
                         <i class="bi bi-printer"></i><span>Perlu Dicetak</span>
@@ -278,44 +300,59 @@
                 </li>
 
 
-                @elseif($role === 'pejabat')
-                     {{-- == MENU PEJABAT == --}}
-                    <li class="nav-item">
-                        <a href="{{ route('pejabat.approval.index') }}" class="nav-link {{ request()->routeIs('pejabat.approval.*') ? 'active' : '' }}">
-                            <i class="bi bi-pen"></i><span>Antrian Approval</span>
-                        </a>
-                    </li>
-                     <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('pejabat.riwayat.*') ? 'active' : '' --}}">
-                            <i class="bi bi-list-check"></i><span>Riwayat Approval</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('profile.edit') ? 'active' : '' --}}">
-                            <i class="bi bi-person-circle"></i><span>Profil Saya</span>
-                        </a>
-                    </li>
-                    {{-- Tambahkan menu delegasi jika perlu --}}
+               @elseif($role === 'pejabat')
+    {{-- == MENU PEJABAT == --}}
+    <li class="nav-heading"><span>Utama</span></li>
+
+    <li class="nav-item">
+        <a href="{{ route('pejabat.dashboard') }}"
+           class="nav-link {{ request()->routeIs('pejabat.dashboard') ? 'active' : '' }}">
+            <i class="bi bi-pen"></i><span>Dashboard</span>
+        </a>
+    </li>
+
+
+    {{-- Antrian Approval --}}
+    <li class="nav-item">
+        <a href="{{ route('pejabat.approval.antrian') }}"
+           class="nav-link {{ request()->routeIs('pejabat.approval.antrian') ? 'active' : '' }}">
+            <i class="bi bi-pen"></i><span>Antrian Approval</span>
+        </a>
+    </li>
+
+    {{-- Riwayat Approval --}}
+    <li class="nav-item">
+        <a href="{{ route('pejabat.approval.riwayat') }}" 
+           class="nav-link {{ request()->routeIs('pejabat.approval.riwayat') ? 'active' : '' }}">
+            <i class="bi bi-list-check"></i>
+            <span>Riwayat Approval</span>
+        </a>
+    </li>
+
+    {{-- Profil --}}
+    <li class="nav-item">
+        <a href="#" class="nav-link {{-- request()->routeIs('profile.edit') ? 'active' : '' --}}">
+            <i class="bi bi-person-circle"></i><span>Profil Saya</span>
+        </a>
+    </li>
 
                 @elseif($role === 'admin akademik')
                     {{-- == MENU ADMIN AKADEMIK == --}}
-                     <li class="nav-item">
-                        <a href="{{ route('admin_akademik.dashboard') }}" class="nav-link {{ request()->routeIs('admin_akademik.dashboard') ? 'active' : '' }}">
-                            <i class="bi bi-speedometer2"></i><span>Dashboard</span>
-                        </a>
-                    </li>
-
+                       {{-- Bagian Utama --}}
+    <li class="nav-heading"><span>Utama</span></li>
+    <li class="nav-item">
+        <a href="{{ route('admin_akademik.dashboard') }}"
+           class="nav-link {{ request()->routeIs('admin_akademik.dashboard') ? 'active' : '' }}">
+            <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+        </a>
+    </li>
                     <li class="nav-heading"><span>Manajemen Surat</span></li>
                      <li class="nav-item">
                         <a href="{{ route('admin_akademik.jenis-surat.index') }}" class="nav-link {{ request()->routeIs('admin_akademik.jenis-surat.*') ? 'active' : '' }}">
                             <i class="bi bi-files"></i><span>Jenis Surat</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('admin_akademik.arsip.semua') ? 'active' : '' --}}">
-                            <i class="bi bi-archive-fill"></i><span>Arsip Semua Surat</span>
-                        </a>
-                    </li>
+                    
 
                     <li class="nav-heading"><span>Manajemen Pengguna</span></li>
                      <li class="nav-item">
@@ -357,17 +394,7 @@
                         </a>
                     </li>
                     
-                     <li class="nav-heading"><span>Sistem</span></li>
-                      <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('admin_akademik.settings.*') ? 'active' : '' --}}">
-                            <i class="bi bi-sliders"></i><span>Pengaturan Umum</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('admin_akademik.logs.*') ? 'active' : '' --}}">
-                            <i class="bi bi-card-list"></i><span>Log Aktivitas</span>
-                        </a>
-                    </li>
+                  
 
                 @endif
 

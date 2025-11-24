@@ -50,15 +50,21 @@
                         </td>
                         <td class="text-center">
                             {{-- Tombol Edit (Arahkan ke route edit nanti) --}}
-                            <a href="#" class="btn btn-warning btn-sm" title="Edit">
-                                <i class="bi bi-pencil-square"></i>
-                            </a>
-                            {{-- Tombol Hapus (Gunakan form untuk DELETE nanti) --}}
-                            <button type="button" class="btn btn-danger btn-sm" title="Hapus" onclick="alert('Fitur hapus belum dibuat.')">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                           <a href="{{ route('admin_akademik.jenis-surat.edit', $jenis->id) }}" class="btn btn-warning btn-sm" title="Edit">
+    <i class="bi bi-pencil-square"></i>
+</a>
+
+                            <form action="{{ route('admin_akademik.jenis-surat.destroy', $jenis->id) }}" method="POST" class="d-inline">
+    @csrf
+    @method('DELETE')
+    <button type="submit" class="btn btn-danger btn-sm"
+        onclick="return confirm('Yakin ingin menghapus jenis surat ini?')"
+        title="Hapus">
+        <i class="bi bi-trash"></i>
+    </button>
+</form>
                              {{-- Tombol Detail/Lihat Alur (Arahkan ke route show nanti) --}}
-                             <a href="#" class="btn btn-info btn-sm" title="Lihat Detail & Alur Approval">
+                             <a href="{{ route('admin_akademik.jenis-surat.show', $jenis->id) }}"" class="btn btn-info btn-sm" title="Lihat Detail & Alur Approval">
                                 <i class="bi bi-eye"></i>
                             </a>
                         </td>

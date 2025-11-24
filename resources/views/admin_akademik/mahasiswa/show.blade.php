@@ -24,6 +24,10 @@
                 <dt class="col-sm-3">Alamat</dt>
                 <dd class="col-sm-9">{{ $mahasiswa->alamat }}</dd>
 
+                <!-- No Telepon -->
+                <dt class="col-sm-3">No. Telepon</dt>
+                <dd class="col-sm-9">{{ $mahasiswa->no_telepon ?? '-' }}</dd>
+
                 <dt class="col-sm-3">Jenis Kelamin</dt>
                 <dd class="col-sm-9">{{ str_replace('_', '-', $mahasiswa->jenis_kelamin) }}</dd>
 

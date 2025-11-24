@@ -4,23 +4,25 @@ namespace App\Http\Requests\AdminAkademik;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePejabatRequest extends FormRequest
+class StoreAdminStaffRequest extends FormRequest
 {
     public function authorize()
     {
-        // Mengizinkan semua user (bisa disesuaikan dengan logika autentikasi)
-        return $this->user()->role->nama_role === 'admin akademik';
+        return true; // sementara dibuka saja
     }
 
     public function rules()
     {
         return [
-            'email' => 'required|email|unique:users,email', // Validasi email
-            'nip_atau_nidn' => 'nullable|string|max:50',    // Validasi NIP/NIDN (opsional)
-            'nama_lengkap' => 'required|string',            // Validasi nama lengkap
-            'jabatan' => 'required|exists:master_jabatan,id', // Validasi jabatan
-            'fakultas_id' => 'nullable|exists:fakultas,id',  // Validasi fakultas (opsional)
-            'program_studi_id' => 'nullable|exists:program_studi,id', // Validasi program studi (opsional)
+            'nip_staff'        => 'required|string|max:50',
+            'nama_lengkap'     => 'required|string|max:255',
+            'program_studi_id' => 'required|exists:program_studi,id',
+
+            // email user baru, harus unik di tabel users
+            'email'            => 'required|email|unique:users,email',
+
+            // opsional
+            'no_telepon'       => 'nullable|string|max:20',
         ];
     }
 }

@@ -32,19 +32,17 @@ class PejabatController extends Controller
     // Menyimpan data pejabat dan user
     public function store(StorePejabatRequest $request)
     {
-        // Jika validasi berhasil, lanjutkan proses penyimpanan
+        // Password default
+        $password = $request->nip_atau_nidn;
 
-        // Set password default berdasarkan nip_atau_nidn dan hash
-        $password = $request->nip_atau_nidn; // Menggunakan nip_atau_nidn sebagai password default
-
-        // Membuat User terlebih dahulu
+        // Buat user
         $user = User::create([
             'email' => $request->email,
-            'password' => Hash::make($password), // Meng-hash password
+            'password' => Hash::make($password),
             'role_id' => 3, // Role Pejabat
         ]);
 
-        // Membuat Pejabat
+        // Buat pejabat
         $pejabat = Pejabat::create([
             'user_id' => $user->id,
             'nip_atau_nidn' => $request->nip_atau_nidn,
@@ -52,6 +50,9 @@ class PejabatController extends Controller
             'master_jabatan_id' => $request->jabatan,
             'fakultas_id' => $request->fakultas_id,
             'program_studi_id' => $request->program_studi_id,
+
+            // ➜ FIELD BARU
+            'no_telepon' => $request->no_telepon,
         ]);
 
         return redirect()->route('admin_akademik.pejabat.index')->with('success', 'Pejabat berhasil ditambahkan!');
@@ -73,18 +74,16 @@ class PejabatController extends Controller
         $pejabat = Pejabat::findOrFail($id);
         $user = $pejabat->user;
 
-        // Mengupdate data user (email & password jika diperlukan)
-        // Jika password baru diinput, update password, jika tidak, biarkan tetap seperti semula
+        // Update email + password jika ada input password
         if ($request->password) {
             $user->update([
-                'password' => Hash::make($request->password), // Update password jika ada input password baru
-            ]);
-        } else {
-            // Jika tidak ada input password, biarkan password tetap sama
-            $user->update([
-                'email' => $request->email,
+                'password' => Hash::make($request->password),
             ]);
         }
+
+        $user->update([
+            'email' => $request->email,
+        ]);
 
         // Update data pejabat
         $pejabat->update([
@@ -93,6 +92,9 @@ class PejabatController extends Controller
             'master_jabatan_id' => $request->jabatan,
             'fakultas_id' => $request->fakultas_id,
             'program_studi_id' => $request->program_studi_id,
+
+            // ➜ FIELD BARU
+            'no_telepon' => $request->no_telepon,
         ]);
 
         return redirect()->route('admin_akademik.pejabat.index')->with('success', 'Pejabat berhasil diperbarui!');

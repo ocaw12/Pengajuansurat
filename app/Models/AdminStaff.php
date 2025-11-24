@@ -15,6 +15,7 @@ class AdminStaff extends Model
         'nip_staff',
         'nama_lengkap',
         'program_studi_id',
+        'no_telepon',
     ];
 
     /**

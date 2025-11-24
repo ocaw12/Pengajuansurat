@@ -100,6 +100,128 @@ class JenisSuratController extends Controller
     }
 
     // ... (metode show, edit, update, destroy akan dibuat nanti) ...
+public function edit(JenisSurat $jenisSurat): View
+    {
+        $kategoriOptions = ['Akademik', 'Kemahasiswaan', 'Keuangan', 'Penelitian', 'Umum'];
+        $masterJabatans  = MasterJabatan::orderBy('nama_jabatan')->get();
+
+        // Ambil alur approval dari tabel alur_approvals, urut berdasarkan 'urutan'
+        $alurApprovals = AlurApproval::where('jenis_surat_id', $jenisSurat->id)
+            ->orderBy('urutan')
+            ->get();
+
+        // Kita map jadi array sederhana untuk dipakai di Blade (JS)
+        $approvalData = $alurApprovals->map(function ($item) {
+            return [
+                'master_jabatan_id' => $item->master_jabatan_id,
+                'scope'             => $item->scope,
+            ];
+        })->values();
+
+        return view('admin_akademik.jenis_surat.edit', compact(
+            'jenisSurat',
+            'kategoriOptions',
+            'masterJabatans',
+            'approvalData'
+        ));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(StoreJenisSuratRequest $request, JenisSurat $jenisSurat): RedirectResponse
+    {
+        $validatedData = $request->validated();
+
+        DB::beginTransaction();
+        try {
+            // 1. Update data Jenis Surat
+            $formSchema = $validatedData['form_schema'] ?? null;
+
+            $jenisSurat->update([
+                'nama_surat'        => $validatedData['nama_surat'],
+                'kode_surat'        => $validatedData['kode_surat'],
+                'kategori'          => $validatedData['kategori'],
+                'format_penomoran'  => $validatedData['format_penomoran'],
+                'isi_template'      => $validatedData['isi_template'],
+                'form_schema'       => $formSchema,
+                // counter_nomor_urut & counter_tahun dibiarkan, biar tidak ke-reset tiap edit
+            ]);
+
+            // 2. Hapus alur approval lama
+            AlurApproval::where('jenis_surat_id', $jenisSurat->id)->delete();
+
+            // 3. Simpan ulang alur approval baru
+            if (isset($validatedData['approvals']) && is_array($validatedData['approvals'])) {
+                $urutan = 1;
+                foreach ($validatedData['approvals'] as $approvalData) {
+                    AlurApproval::create([
+                        'jenis_surat_id'   => $jenisSurat->id,
+                        'urutan'           => $urutan++,
+                        'master_jabatan_id'=> $approvalData['master_jabatan_id'],
+                        'scope'            => $approvalData['scope'],
+                    ]);
+                }
+            } else {
+                throw new \Exception("Data approval tidak ditemukan atau tidak valid.");
+            }
+
+            DB::commit();
+
+            Log::info('Jenis surat berhasil diupdate beserta alur approvalnya: ' . $jenisSurat->nama_surat);
+
+            return redirect()
+                ->route('admin_akademik.jenis-surat.index')
+                ->with('success', 'Jenis surat berhasil diperbarui!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Gagal mengupdate jenis surat: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+
+            return back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat mengupdate data: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(JenisSurat $jenisSurat): RedirectResponse
+    {
+        DB::beginTransaction();
+        try {
+            // Hapus dulu alur approval yang terkait
+            AlurApproval::where('jenis_surat_id', $jenisSurat->id)->delete();
+
+            // (Opsional) Cek dulu apakah jenis surat sedang dipakai di pengajuan_surat,
+            // kalau iya bisa dikasih restriction. Untuk sekarang langsung delete.
+            $nama = $jenisSurat->nama_surat;
+            $jenisSurat->delete();
+
+            DB::commit();
+
+            Log::info('Jenis surat dihapus: ' . $nama);
+
+            return redirect()
+                ->route('admin_akademik.jenis-surat.index')
+                ->with('success', 'Jenis surat berhasil dihapus.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Gagal menghapus jenis surat: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+
+            return redirect()
+                ->route('admin_akademik.jenis-surat.index')
+                ->with('error', 'Terjadi kesalahan saat menghapus jenis surat: ' . $e->getMessage());
+        }
+    }
+    public function show(JenisSurat $jenisSurat)
+{
+    $alurApprovals = $jenisSurat->alurApprovals()->orderBy('urutan')->get();
+
+    return view('admin_akademik.jenis_surat.show', compact('jenisSurat', 'alurApprovals'));
+}
 
 }
 

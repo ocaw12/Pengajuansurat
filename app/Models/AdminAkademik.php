@@ -16,6 +16,7 @@ class AdminAkademik extends Model
         'user_id',
         'nip_akademik',
         'nama_lengkap',
+         'no_telepon',
     ];
 
     public function user(): BelongsTo

@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 // --- CONTROLLER MAHASISWA ---
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboard;
 use App\Http\Controllers\Mahasiswa\PengajuanController;
+use App\Http\Controllers\Mahasiswa\RiwayatController;
 
 // --- CONTROLLER STAFF JURUSAN ---
 use App\Http\Controllers\StaffJurusan\DashboardController as StaffDashboard;
@@ -71,8 +72,10 @@ Route::middleware(['auth'])->group(function () {
          ->name('mahasiswa.')
          ->group(function () {
 
-        Route::get('/dashboard', [MahasiswaDashboard::class, 'index'])->name('dashboard');
-        
+ Route::get('/dashboard', [MahasiswaDashboard::class, 'index'])
+            ->name('dashboard');
+             Route::get('/riwayat', [RiwayatController::class, 'index'])
+            ->name('riwayat.index');        
         // Rute untuk MENAMPILKAN form (Anda sudah punya ini)
         Route::get('/pengajuan/buat', [PengajuanController::class, 'create'])->name('pengajuan.create');
         
@@ -102,9 +105,8 @@ Route::middleware(['auth'])->group(function () {
          ->group(function () {
         
         // Dashboard staff = halaman antrian validasi
-        Route::get('/dashboard', [ValidasiController::class, 'index'])->name('dashboard'); 
-        
-        // Rute untuk validasi
+ Route::get('/dashboard', [StaffDashboard::class, 'index'])
+        ->name('dashboard');           // Rute untuk validasi
         Route::get('/validasi', [ValidasiController::class, 'index'])->name('validasi.index');
         Route::get('/validasi/{pengajuan}', [ValidasiController::class, 'show'])->name('validasi.show');
         Route::post('/validasi/{pengajuan}', [ValidasiController::class, 'validateSubmission'])->name('validasi.submit');
@@ -132,10 +134,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [PejabatDashboard::class, 'index'])->name('dashboard'); // Antrian approval
         
         // Rute untuk approval
-        Route::get('/approval', [ApprovalController::class, 'index'])->name('approval.index');
+        Route::get('/approval', [ApprovalController::class, 'index'])->name('approval.antrian');
+        Route::get('/approval/riwayat', [ApprovalController::class, 'riwayat'])
+            ->name('approval.riwayat');
         // Rute untuk approval
         Route::get('/approval/{approval}', [ApprovalController::class, 'show'])->name('approval.show');
         Route::post('/approval/{approval}', [ApprovalController::class, 'approveOrReject'])->name('approval.submit');
+ 
     });
 
     /*

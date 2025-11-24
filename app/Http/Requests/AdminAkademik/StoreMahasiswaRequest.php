@@ -8,24 +8,29 @@ class StoreMahasiswaRequest extends FormRequest
 {
     public function authorize()
     {
-        return true; // Atur ini sesuai kebutuhan otorisasi
+        return true;
     }
 
     public function rules()
     {
-        // Ambil ID mahasiswa dari route untuk pengecekan saat edit
-        $mahasiswaId = $this->route('mahasiswa'); // Ambil ID mahasiswa dari URL
+        // ID mahasiswa untuk pengecualian unique (kalau rutenya ada)
+        $mahasiswaId = $this->route('mahasiswa');
 
         return [
-            'nim' => 'required|unique:mahasiswa,nim,' . $mahasiswaId . '|max:50', // Validasi NIM
+            'nim' => 'required|max:50|unique:mahasiswa,nim,' . $mahasiswaId,
             'nama_lengkap' => 'required|max:255',
             'tempat_lahir' => 'required|max:255',
             'tanggal_lahir' => 'required|date',
             'alamat' => 'required|max:255',
-            'jenis_kelamin' => 'required|in:Laki_laki,Perempuan', // Validasi jenis kelamin
-            'angkatan' => 'required|integer|min:2000|max:'.(date('Y')+1), // Validasi angkatan
+            'jenis_kelamin' => 'required|in:Laki_laki,Perempuan',
+            'angkatan' => 'required|integer|min:2000|max:' . (date('Y') + 1),
             'program_studi_id' => 'required|exists:program_studi,id',
-            'email' => 'required|email|unique:users,email,' . $this->route('mahasiswa'), // Validasi email dengan pengecualian untuk mahasiswa yang sedang diedit
+
+            // ⬇️ EMAIL
+            'email' => 'required|email|unique:users,email,' . $mahasiswaId,
+
+            // ⬇️ NOMOR TELEPON BARU DITAMBAHKAN
+            'no_telepon' => 'nullable|string|max:20',
         ];
     }
 }
