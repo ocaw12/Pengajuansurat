@@ -9,10 +9,10 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>NIP / NIDN</th> {{-- ganti dari ID --}}
                 <th>Nama Lengkap</th>
                 <th>Jabatan</th>
-                <th>No. Telepon</th> {{-- ⬅️ kolom baru --}}
+                <th>No. Telepon</th>
                 <th>Email</th>
                 <th>Aksi</th>
             </tr>
@@ -20,16 +20,20 @@
         <tbody>
             @foreach($pejabat as $item)
                 <tr>
-                    <td>{{ $item->id }}</td>
+                    {{-- tampilkan nip/nidn, bukan id --}}
+                    <td>{{ $item->nip_atau_nidn }}</td>
+
                     <td>{{ $item->nama_lengkap }}</td>
                     <td>{{ $item->masterJabatan->nama_jabatan }}</td>
-                    <td>{{ $item->no_telepon ?? '-' }}</td> {{-- ⬅️ tampilkan no telepon --}}
+                    <td>{{ $item->no_telepon ?? '-' }}</td>
                     <td>{{ $item->user->email }}</td>
                     <td>
                         <a href="{{ route('admin_akademik.pejabat.edit', $item->id) }}" class="btn btn-warning btn-sm">
                             Edit
                         </a>
-                        <form action="{{ route('admin_akademik.pejabat.destroy', $item->id) }}" method="POST" style="display:inline;">
+                        <form action="{{ route('admin_akademik.pejabat.destroy', $item->id) }}"
+                              method="POST"
+                              style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit"

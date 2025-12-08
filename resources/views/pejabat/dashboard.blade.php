@@ -72,9 +72,9 @@
                                 <tbody>
                                     @foreach($antrianTerbaru as $antrian)
                                         <tr>
-                                            <td>{{ $antrian->pengajuanSurat->mahasiswa->nama ?? '-' }}</td>
+                                            <td>{{ $antrian->pengajuanSurat->mahasiswa->nama_lengkap ?? '-' }}</td>
                                             <td>{{ $antrian->pengajuanSurat->mahasiswa->programStudi->nama_prodi ?? '-' }}</td>
-                                            <td>{{ $antrian->pengajuanSurat->jenisSurat->nama_jenis ?? '-' }}</td>
+                                            <td>{{ $antrian->pengajuanSurat->jenisSurat->nama_surat ?? '-' }}</td>
                                             <td>{{ optional($antrian->pengajuanSurat->created_at)->format('d/m/Y') }}</td>
                                             <td>
                                                 <a href="{{ route('pejabat.approval.show', $antrian->id) }}"
@@ -110,9 +110,9 @@
                                 <li class="list-group-item px-0">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <strong>{{ $item->pengajuanSurat->jenisSurat->nama_jenis ?? '-' }}</strong>
+                                            <strong>{{ $item->pengajuanSurat->jenisSurat->nama_surat ?? '-' }}</strong>
                                             <div class="small text-muted">
-                                                {{ $item->pengajuanSurat->mahasiswa->nama ?? '-' }}<br>
+                                                {{ $item->pengajuanSurat->mahasiswa->nama_lengkap ?? '-' }}<br>
                                                 {{ $item->tanggal_approval ? \Carbon\Carbon::parse($item->tanggal_approval)->format('d/m/Y H:i') : '-' }}
                                             </div>
                                         </div>

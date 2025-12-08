@@ -297,7 +297,8 @@
                     <a href="{{ route('staff_jurusan.cetak.pengambilan') }}" class="nav-link {{ request()->routeIs('staff_jurusan.cetak.pengambilan') ? 'active' : '' }}">
                         <i class="bi bi-person-check"></i><span>Antrian Pengambilan</span>
                     </a>
-                </li>
+                     </li>
+        
 
 
                @elseif($role === 'pejabat')
@@ -355,11 +356,7 @@
                     
 
                     <li class="nav-heading"><span>Manajemen Pengguna</span></li>
-                     <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('admin_akademik.users.*') ? 'active' : '' --}}">
-                            <i class="bi bi-people"></i><span>Manajemen User</span>
-                        </a>
-                    </li>
+                     
                     <li class="nav-item">
                         <a href="{{ route('admin_akademik.pejabat.index') }}" class="nav-link {{-- request()->routeIs('admin_akademik.pejabat.*') ? 'active' : '' --}}">
                             <i class="bi bi-person-badge"></i><span>Manajemen Pejabat</span>

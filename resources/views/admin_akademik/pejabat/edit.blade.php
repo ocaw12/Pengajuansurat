@@ -104,6 +104,19 @@
             <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah password.</small>
         </div>
 
+        {{-- Akun Aktif (dipindah ke bawah) --}}
+        <div class="form-group form-check mt-2">
+            <input
+                type="checkbox"
+                class="form-check-input"
+                id="is_active"
+                name="is_active"
+                value="1"
+                {{ old('is_active', $pejabat->user->is_active) ? 'checked' : '' }}
+            >
+            <label class="form-check-label" for="is_active">Akun aktif</label>
+        </div>
+
         <button type="submit" class="btn btn-primary mt-2">Update</button>
     </form>
 

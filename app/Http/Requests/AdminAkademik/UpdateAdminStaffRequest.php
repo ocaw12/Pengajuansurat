@@ -22,7 +22,9 @@ class UpdateAdminStaffRequest extends FormRequest
             'program_studi_id' => 'required|exists:program_studi,id',
             // Pengecekan email, mengabaikan email yang sama dengan yang sedang diedit
             'email' => 'required|email|unique:users,email,' . $userId, 
-                        'no_telepon' => 'nullable|string|max:20',
+         'no_telepon' => 'nullable|string|max:20',
+          'is_active'        => 'nullable|boolean',
+
 
         ];
     }

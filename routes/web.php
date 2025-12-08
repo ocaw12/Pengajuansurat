@@ -61,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Dashboard utama yang akan me-redirect berdasarkan role
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
 
     /*
     |--------------------------------------------------------------------------
@@ -110,8 +111,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/validasi', [ValidasiController::class, 'index'])->name('validasi.index');
         Route::get('/validasi/{pengajuan}', [ValidasiController::class, 'show'])->name('validasi.show');
         Route::post('/validasi/{pengajuan}', [ValidasiController::class, 'validateSubmission'])->name('validasi.submit');
-        
-        // Rute untuk fitur cetak (menggunakan ValidasiController)
+     // Rute untuk fitur cetak (menggunakan ValidasiController)
         Route::get('/perlu-dicetak', [ValidasiController::class, 'indexCetak'])->name('cetak.index'); // <-- Antrian Perlu Cetak
         Route::post('/tandai-siap-diambil/{pengajuan}', [ValidasiController::class, 'tandaiSiapDiambil'])->name('cetak.siapDiambil'); // <-- Aksi kirim WA
         

@@ -119,6 +119,22 @@
             @enderror
         </div>
 
+        {{-- Akun Aktif --}}
+        <div class="form-group form-check mt-2">
+            <input
+                type="checkbox"
+                class="form-check-input"
+                id="is_active"
+                name="is_active"
+                value="1"
+                {{ old('is_active', true) ? 'checked' : '' }}
+            >
+            <label class="form-check-label" for="is_active">Akun aktif</label>
+            @error('is_active')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
         <button type="submit" class="btn btn-primary mt-3">Simpan</button>
     </form>
 

@@ -181,4 +181,5 @@ class ValidasiController extends Controller
             abort(403, 'Akses ditolak. Anda tidak berwenang untuk surat ini.');
         }
     }
+   
 }

@@ -37,22 +37,21 @@ class PejabatController extends Controller
 
         // Buat user
         $user = User::create([
-            'email' => $request->email,
-            'password' => Hash::make($password),
-            'role_id' => 3, // Role Pejabat
+            'email'     => $request->email,
+            'password'  => Hash::make($password),
+            'role_id'   => 3, // Role Pejabat
+            'is_active' => $request->boolean('is_active'), // ⬅️ TAMBAH DI SINI
         ]);
 
         // Buat pejabat
         $pejabat = Pejabat::create([
-            'user_id' => $user->id,
-            'nip_atau_nidn' => $request->nip_atau_nidn,
-            'nama_lengkap' => $request->nama_lengkap,
+            'user_id'           => $user->id,
+            'nip_atau_nidn'     => $request->nip_atau_nidn,
+            'nama_lengkap'      => $request->nama_lengkap,
             'master_jabatan_id' => $request->jabatan,
-            'fakultas_id' => $request->fakultas_id,
-            'program_studi_id' => $request->program_studi_id,
-
-            // ➜ FIELD BARU
-            'no_telepon' => $request->no_telepon,
+            'fakultas_id'       => $request->fakultas_id,
+            'program_studi_id'  => $request->program_studi_id,
+            'no_telepon'        => $request->no_telepon,
         ]);
 
         return redirect()->route('admin_akademik.pejabat.index')->with('success', 'Pejabat berhasil ditambahkan!');
@@ -61,7 +60,7 @@ class PejabatController extends Controller
     // Menampilkan form untuk edit pejabat
     public function edit($id)
     {
-        $pejabat = Pejabat::findOrFail($id);
+        $pejabat = Pejabat::with('user')->findOrFail($id); // ⬅️ sekalian load user
         $masterJabatan = MasterJabatan::all();
         $fakultas = Fakultas::all();
         $programStudi = ProgramStudi::all();
@@ -71,30 +70,30 @@ class PejabatController extends Controller
     // Memperbarui data pejabat
     public function update(StorePejabatRequest $request, $id)
     {
-        $pejabat = Pejabat::findOrFail($id);
+        $pejabat = Pejabat::with('user')->findOrFail($id);
         $user = $pejabat->user;
 
-        // Update email + password jika ada input password
-        if ($request->password) {
-            $user->update([
-                'password' => Hash::make($request->password),
-            ]);
+        // Siapkan data user
+        $userData = [
+            'email'     => $request->email,
+            'is_active' => $request->boolean('is_active'), // ⬅️ TAMBAH DI SINI
+        ];
+
+        // Update password jika ada input password
+        if ($request->filled('password')) {
+            $userData['password'] = Hash::make($request->password);
         }
 
-        $user->update([
-            'email' => $request->email,
-        ]);
+        $user->update($userData);
 
         // Update data pejabat
         $pejabat->update([
-            'nip_atau_nidn' => $request->nip_atau_nidn,
-            'nama_lengkap' => $request->nama_lengkap,
+            'nip_atau_nidn'     => $request->nip_atau_nidn,
+            'nama_lengkap'      => $request->nama_lengkap,
             'master_jabatan_id' => $request->jabatan,
-            'fakultas_id' => $request->fakultas_id,
-            'program_studi_id' => $request->program_studi_id,
-
-            // ➜ FIELD BARU
-            'no_telepon' => $request->no_telepon,
+            'fakultas_id'       => $request->fakultas_id,
+            'program_studi_id'  => $request->program_studi_id,
+            'no_telepon'        => $request->no_telepon,
         ]);
 
         return redirect()->route('admin_akademik.pejabat.index')->with('success', 'Pejabat berhasil diperbarui!');
@@ -104,6 +103,7 @@ class PejabatController extends Controller
     public function destroy($id)
     {
         $pejabat = Pejabat::findOrFail($id);
+
         $pejabat->delete();
 
         return redirect()->route('admin_akademik.pejabat.index')->with('success', 'Pejabat berhasil dihapus!');

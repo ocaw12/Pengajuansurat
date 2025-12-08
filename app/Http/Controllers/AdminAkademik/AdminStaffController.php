@@ -26,9 +26,10 @@ class AdminStaffController extends Controller
 
         // Menyimpan data ke tabel users terlebih dahulu (karena user_id diperlukan di admin_staff)
         $user = User::create([
-            'email'    => $request->email,
-            'password' => Hash::make($request->nip_staff), // Password sama dengan NIP
-            'role_id'  => 2, // Pastikan ini adalah ID role untuk admin_staff
+            'email'     => $request->email,
+            'password'  => Hash::make($request->nip_staff), // Password sama dengan NIP
+            'role_id'   => 2, // Pastikan ini adalah ID role untuk admin_staff
+            'is_active' => $request->boolean('is_active'), // ⬅️ is_active
         ]);
 
         // Menyimpan data ke tabel admin_staff
@@ -58,7 +59,7 @@ class AdminStaffController extends Controller
     public function edit($id)
     {
         // Ambil admin staff berdasarkan ID
-        $adminStaff = AdminStaff::with('programStudi')->findOrFail($id);
+        $adminStaff = AdminStaff::with('programStudi', 'user')->findOrFail($id); // ⬅️ load user juga
 
         // Ambil data program studi untuk dropdown
         $program_studis = ProgramStudi::all();
@@ -82,17 +83,18 @@ class AdminStaffController extends Controller
             'no_telepon'       => $request->no_telepon, // ⬅️ DITAMBAHKAN
         ]);
 
-        // Update data user yang terkait
-        $user->update([
-            'email' => $request->email, // Update email
-        ]);
+        // Data dasar user
+        $userData = [
+            'email'     => $request->email, // Update email
+            'is_active' => $request->boolean('is_active'), // ⬅️ is_active
+        ];
 
         // Optional: Update password jika perlu
         if ($request->filled('password')) {
-            $user->update([
-                'password' => Hash::make($request->password),
-            ]);
+            $userData['password'] = Hash::make($request->password);
         }
+
+        $user->update($userData);
 
         return redirect()
             ->route('admin_akademik.admin-staff.index')

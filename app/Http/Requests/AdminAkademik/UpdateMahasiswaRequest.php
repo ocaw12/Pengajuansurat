@@ -29,6 +29,8 @@ class UpdateMahasiswaRequest extends FormRequest
             'no_telepon' => 'nullable|string|max:20',
 
             'email' => 'required|email|unique:users,email,' . $userId, // Validasi email dengan pengecualian untuk mahasiswa yang sedang diedit
+            'is_active'        => 'nullable|boolean',
+
         ];
     }
 }

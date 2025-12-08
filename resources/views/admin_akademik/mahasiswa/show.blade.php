@@ -40,6 +40,20 @@
                 <dt class="col-sm-3">Email</dt>
                 <dd class="col-sm-9">{{ $mahasiswa->user->email ?? '-' }}</dd>
 
+                <!-- Status Akun (is_active) -->
+                <dt class="col-sm-3">Status Akun</dt>
+                <dd class="col-sm-9">
+                    @if($mahasiswa->user)
+                        @if($mahasiswa->user->is_active)
+                            <span class="badge bg-success">Aktif</span>
+                        @else
+                            <span class="badge bg-danger">Tidak Aktif</span>
+                        @endif
+                    @else
+                        -
+                    @endif
+                </dd>
+
                 <dt class="col-sm-3">Dibuat / Diperbarui</dt>
                 <dd class="col-sm-9">
                     {{ $mahasiswa->created_at?->format('d-m-Y H:i') }} /

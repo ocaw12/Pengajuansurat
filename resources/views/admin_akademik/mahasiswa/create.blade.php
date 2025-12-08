@@ -127,6 +127,23 @@
                     @enderror
                 </div>
 
+                <!-- Akun Aktif (is_active) -->
+                <div class="mb-3 form-check">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="is_active"
+                        name="is_active"
+                        value="1"
+                        {{ old('is_active', true) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="is_active">
+                        Akun aktif
+                    </label>
+                    @error('is_active')
+                        <div class="text-danger d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+
                 <!-- Tombol Simpan -->
                 <button type="submit" class="btn btn-warning">
                     <i class="bi bi-save"></i> Simpan Data

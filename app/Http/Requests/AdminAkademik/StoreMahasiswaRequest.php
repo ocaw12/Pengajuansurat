@@ -31,6 +31,7 @@ class StoreMahasiswaRequest extends FormRequest
 
             // ⬇️ NOMOR TELEPON BARU DITAMBAHKAN
             'no_telepon' => 'nullable|string|max:20',
+             'is_active'        => 'nullable|boolean',
         ];
     }
 }

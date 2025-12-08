@@ -23,6 +23,8 @@ class StoreAdminStaffRequest extends FormRequest
 
             // opsional
             'no_telepon'       => 'nullable|string|max:20',
+             'is_active'        => 'nullable|boolean',
+
         ];
     }
 }
