@@ -12,18 +12,6 @@
         </a>
     </div>
 
-    {{-- Tampilkan Flash Message --}}
-    @if (session('success'))
-        <div class="alert alert-success m-3 mb-0">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if (session('error'))
-        <div class="alert alert-danger m-3 mb-0">
-            {{ session('error') }}
-        </div>
-    @endif
-
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-hover align-middle">
@@ -49,22 +37,18 @@
                             {{ $jenis->alurApprovals()->count() }} Level
                         </td>
                         <td class="text-center">
-                            {{-- Tombol Edit (Arahkan ke route edit nanti) --}}
-                           <a href="{{ route('admin_akademik.jenis-surat.edit', $jenis->id) }}" class="btn btn-warning btn-sm" title="Edit">
-    <i class="bi bi-pencil-square"></i>
-</a>
+                            {{-- Tombol Edit --}}
+                            <a href="{{ route('admin_akademik.jenis-surat.edit', $jenis->id) }}" class="btn btn-warning btn-sm" title="Edit">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
 
-                            <form action="{{ route('admin_akademik.jenis-surat.destroy', $jenis->id) }}" method="POST" class="d-inline">
-    @csrf
-    @method('DELETE')
-    <button type="submit" class="btn btn-danger btn-sm"
-        onclick="return confirm('Yakin ingin menghapus jenis surat ini?')"
-        title="Hapus">
-        <i class="bi bi-trash"></i>
-    </button>
-</form>
-                             {{-- Tombol Detail/Lihat Alur (Arahkan ke route show nanti) --}}
-                             <a href="{{ route('admin_akademik.jenis-surat.show', $jenis->id) }}"" class="btn btn-info btn-sm" title="Lihat Detail & Alur Approval">
+                            {{-- Tombol Delete --}}
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $jenis->id }}" title="Hapus">
+                                <i class="bi bi-trash"></i>
+                            </button>
+
+                            {{-- Tombol Detail --}}
+                            <a href="{{ route('admin_akademik.jenis-surat.show', $jenis->id) }}" class="btn btn-info btn-sm" title="Lihat Detail & Alur Approval">
                                 <i class="bi bi-eye"></i>
                             </a>
                         </td>
@@ -82,4 +66,30 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Konfirmasi Hapus -->
+@foreach($jenisSurats as $jenis)
+<div class="modal fade" id="deleteModal{{ $jenis->id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Apakah Anda yakin ingin menghapus jenis surat ini?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <form action="{{ route('admin_akademik.jenis-surat.destroy', $jenis->id) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
+
 @endsection

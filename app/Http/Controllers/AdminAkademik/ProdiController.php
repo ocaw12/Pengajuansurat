@@ -34,8 +34,8 @@ public function store(ProdiRequest $request)
     // Menampilkan daftar Prodi
     public function index()
     {
-       $prodis = ProgramStudi::with('fakultas')->get();
-return view('admin_akademik.prodi.index', compact('prodis'));
+        $prodis = ProgramStudi::with('fakultas')->paginate(10); // 10 data per halaman
+    return view('admin_akademik.prodi.index', compact('prodis'));
 
     }
      public function edit($id)

@@ -83,7 +83,7 @@
                                 <tbody>
                                     @foreach($antrianValidasi as $pengajuan)
                                         <tr>
-                                            <td>{{ $pengajuan->mahasiswa->nama_lengkao ?? '-' }}</td>
+                                            <td>{{ $pengajuan->mahasiswa->nama_lengkap ?? '-' }}</td>
                                             <td>{{ $pengajuan->mahasiswa->programStudi->nama_prodi ?? '-' }}</td>
                                             <td>{{ $pengajuan->jenisSurat->nama_surat ?? '-' }}</td>
                                             <td>{{ optional($pengajuan->tanggal_pengajuan)->format('d/m/Y') }}</td>

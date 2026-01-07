@@ -106,19 +106,66 @@
 </div>
 
 {{-- =========================== --}}
-{{--  (OPTIONAL placeholder grafik) --}}
+{{--    NOTIFICATION & ALERTS     --}}
 {{-- =========================== --}}
-<div class="card shadow-sm border-0">
-    <div class="card-header bg-light py-3">
-        <h5 class="mb-0 card-title">
-            <i class="bi bi-bar-chart-line me-2"></i>
-            Grafik Aktivitas (Coming Soon)
-        </h5>
+<div class="row g-3 mb-4">
+
+    {{-- Notification Card --}}
+    <div class="col-md-6 col-sm-12">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-light py-3">
+                <h5 class="mb-0 card-title">
+                    <i class="bi bi-bell me-2"></i>
+                    Pemberitahuan Terbaru
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Pembaruan Sistem
+                        <span class="badge bg-success">Baru</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Pengajuan Surat Tertunda
+                        <span class="badge bg-warning">Pending</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Persetujuan Mahasiswa Baru
+                        <span class="badge bg-info">Proses</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
-    <div class="card-body text-center text-muted py-5">
-        <i class="bi bi-graph-up fs-1 mb-3 text-secondary"></i>
-        <p>Fitur grafik pengajuan & tren sistem akan ditambahkan di versi berikutnya.</p>
+
+    {{-- Latest Activities --}}
+    <div class="col-md-6 col-sm-12">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-light py-3">
+                <h5 class="mb-0 card-title">
+                    <i class="bi bi-clock-history me-2"></i>
+                    Aktivitas Terbaru
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Mahasiswa A mengajukan surat
+                        <span class="text-muted small">1 jam lalu</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Pejabat B menyetujui pengajuan
+                        <span class="text-muted small">3 jam lalu</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Staff C melakukan pengambilan
+                        <span class="text-muted small">2 hari lalu</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
+
 </div>
 
 @endsection

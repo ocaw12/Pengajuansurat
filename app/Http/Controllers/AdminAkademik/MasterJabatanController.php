@@ -9,7 +9,7 @@ class MasterJabatanController extends Controller
 {
     public function index()
     {
-        $jabatans = MasterJabatan::all();
+        $jabatans = MasterJabatan::paginate(10);
         return view('admin_akademik.masterjabatan.index', compact('jabatans'));
     }
 

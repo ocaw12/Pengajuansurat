@@ -164,7 +164,6 @@ Route::middleware(['auth'])->group(function () {
         // **PERBAIKI BAGIAN INI**
         // Rute Prodi (dengan namespace yang benar)
         Route::resource('prodi', ProdiController::class); // Pastikan route prodi sudah benar
-       
 // Di dalam file web.php
 Route::resource('master-jabatan', MasterJabatanController::class);
         Route::resource('pejabat', PejabatController::class); // Manajemen Profil Pejabat

@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB; // <-- TAMBAHKAN USE DB
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
-
+use App\Http\Requests\AdminAkademik\UpdateJenisSuratRequest; //
 class JenisSuratController extends Controller
 {
     /**
@@ -129,7 +129,7 @@ public function edit(JenisSurat $jenisSurat): View
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreJenisSuratRequest $request, JenisSurat $jenisSurat): RedirectResponse
+public function update(UpdateJenisSuratRequest $request, JenisSurat $jenisSurat): RedirectResponse
     {
         $validatedData = $request->validated();
 

@@ -264,12 +264,7 @@
                             <i class="bi bi-file-earmark-plus"></i><span>Buat Pengajuan Baru</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link {{-- request()->routeIs('profile.edit') ? 'active' : '' --}}">
-                            <i class="bi bi-person-circle"></i><span>Profil Saya</span>
-                        </a>
-                    </li>
-
+                    
 
                 @elseif($role === 'staff jurusan')
                     {{-- == MENU STAFF JURUSAN == --}}
@@ -308,7 +303,7 @@
     <li class="nav-item">
         <a href="{{ route('pejabat.dashboard') }}"
            class="nav-link {{ request()->routeIs('pejabat.dashboard') ? 'active' : '' }}">
-            <i class="bi bi-pen"></i><span>Dashboard</span>
+            <i class="bi bi-speedometer2"></i><span>Dashboard</span>
         </a>
     </li>
 
@@ -330,74 +325,59 @@
         </a>
     </li>
 
-    {{-- Profil --}}
-    <li class="nav-item">
-        <a href="#" class="nav-link {{-- request()->routeIs('profile.edit') ? 'active' : '' --}}">
-            <i class="bi bi-person-circle"></i><span>Profil Saya</span>
-        </a>
-    </li>
+    
 
-                @elseif($role === 'admin akademik')
-                    {{-- == MENU ADMIN AKADEMIK == --}}
-                       {{-- Bagian Utama --}}
-    <li class="nav-heading"><span>Utama</span></li>
-    <li class="nav-item">
-        <a href="{{ route('admin_akademik.dashboard') }}"
-           class="nav-link {{ request()->routeIs('admin_akademik.dashboard') ? 'active' : '' }}">
-            <i class="bi bi-speedometer2"></i><span>Dashboard</span>
-        </a>
-    </li>
-                    <li class="nav-heading"><span>Manajemen Surat</span></li>
-                     <li class="nav-item">
-                        <a href="{{ route('admin_akademik.jenis-surat.index') }}" class="nav-link {{ request()->routeIs('admin_akademik.jenis-surat.*') ? 'active' : '' }}">
-                            <i class="bi bi-files"></i><span>Jenis Surat</span>
-                        </a>
-                    </li>
-                    
+                  @elseif($role === 'admin akademik')
+            {{-- == MENU ADMIN AKADEMIK == --}}
+            <li class="nav-heading"><span>Utama</span></li>
+            <li class="nav-item">
+                <a href="{{ route('admin_akademik.dashboard') }}" class="nav-link {{ request()->routeIs('admin_akademik.dashboard') ? 'active' : '' }}">
+                    <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-heading"><span>Manajemen Surat</span></li>
+            <li class="nav-item">
+                <a href="{{ route('admin_akademik.jenis-surat.index') }}" class="nav-link {{ request()->routeIs('admin_akademik.jenis-surat.*') ? 'active' : '' }}">
+                    <i class="bi bi-files"></i><span>Jenis Surat</span>
+                </a>
+            </li>
+            <li class="nav-heading"><span>Manajemen Pengguna</span></li>
+            <li class="nav-item">
+                <a href="{{ route('admin_akademik.pejabat.index') }}" class="nav-link {{ request()->routeIs('admin_akademik.pejabat.*') ? 'active' : '' }}">
+                    <i class="bi bi-person-badge"></i><span>Manajemen Pejabat</span>
+                </a>
+            </li>
+    
+            <li class="nav-item">
+                <a href="{{ route('admin_akademik.admin-staff.index') }}" class="nav-link {{ request()->routeIs('admin_akademik.admin-staff.*') ? 'active' : '' }}">
+                    <i class="bi bi-person-workspace"></i><span>Manajemen Staff</span> 
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('admin_akademik.mahasiswa.index') }}" class="nav-link {{ request()->routeIs('admin_akademik.mahasiswa.*') ? 'active' : '' }}">
+                    <i class="bi bi-person-vcard"></i><span>Manajemen Mahasiswa</span>
+                </a>
+            </li>
+            <li class="nav-heading"><span>Data Master</span></li>
+            <li class="nav-item">
+                <a href="{{ route('admin_akademik.fakultas.index') }}" class="nav-link {{ request()->routeIs('admin_akademik.fakultas.*') ? 'active' : '' }}">
+                    <i class="bi bi-building"></i><span>Fakultas</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('admin_akademik.prodi.index') }}" class="nav-link {{ request()->routeIs('admin_akademik.prodi.*') ? 'active' : '' }}">
+                    <i class="bi bi-diagram-3"></i><span>Program Studi</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('admin_akademik.master-jabatan.index') }}" class="nav-link {{ request()->routeIs('admin_akademik.master-jabatan.*') ? 'active' : '' }}">
+                    <i class="bi bi-briefcase"></i><span>Master Jabatan</span>
+                </a>
+            </li>
 
-                    <li class="nav-heading"><span>Manajemen Pengguna</span></li>
-                     
-                    <li class="nav-item">
-                        <a href="{{ route('admin_akademik.pejabat.index') }}" class="nav-link {{-- request()->routeIs('admin_akademik.pejabat.*') ? 'active' : '' --}}">
-                            <i class="bi bi-person-badge"></i><span>Manajemen Pejabat</span>
-                        </a>
-                    </li>
-                     <li class="nav-item">
-                        <a href="{{ route('admin_akademik.admin-staff.index') }}" class="nav-link {{-- request()->routeIs('admin_akademik.staff.*') ? 'active' : '' --}}">
-                            <i class="bi bi-person-workspace"></i><span>Manajemen Staff</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin_akademik.mahasiswa.index') }}" class="nav-link {{-- request()->routeIs('admin_akademik.mahasiswa.*') ? 'active' : '' --}}">
-                            <i class="bi bi-person-vcard"></i><span>Manajemen Mahasiswa</span>
-                        </a>
-                    </li>
-
-
-                    <li class="nav-heading"><span>Data Master</span></li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin_akademik.fakultas.index') }}" class="nav-link {{-- request()->routeIs('admin_akademik.fakultas.*') ? 'active' : '' --}}">
-                            <i class="bi bi-building"></i><span>Fakultas</span>
-                        </a>
-                    </li>
-                     <li class="nav-item">
-                        <a href="{{ route('admin_akademik.prodi.index') }}" class="nav-link {{-- request()->routeIs('admin_akademik.prodi.*') ? 'active' : '' --}}">
-                            <i class="bi bi-diagram-3"></i><span>Program Studi</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin_akademik.master-jabatan.index') }}" class="nav-link {{-- request()->routeIs('admin_akademik.jabatan.*') ? 'active' : '' --}}">
-                            <i class="bi bi-briefcase"></i><span>Master Jabatan</span>
-                        </a>
-                    </li>
-                    
-                  
-
-                @endif
-
-            @endauth
-
-        </ul>
+        @endif
+    @endauth
+</ul>
 
         {{-- Spacer agar menu bawah tidak tertutup jika sidebar scrollable --}}
          <div style="height: 50px;"></div>
