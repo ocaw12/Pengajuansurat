@@ -52,6 +52,11 @@
                 </tbody>
             </table>
         </div>
+        {{-- 🔽 TAMBAHKAN INI --}}
+<div class="d-flex justify-content-center mt-3">
+    {{ $mahasiswas->links() }}
+</div>
+{{-- 🔼 SAMPAI SINI --}}
     </div>
 </div>
 

@@ -6,86 +6,135 @@
 @section('content')
 <div class="card shadow-sm">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0 card-title"><i class="bi bi-person-badge me-2"></i> Daftar Pejabat</h5>
-        <a href="{{ route('admin_akademik.pejabat.create') }}" class="btn btn-primary btn-sm">
+        <h5 class="mb-0 fw-semibold">
+            <i class="bi bi-person-badge me-2"></i> Daftar Pejabat
+        </h5>
+        <a href="{{ route('admin_akademik.pejabat.create') }}"
+           class="btn btn-warning btn-sm text-dark fw-semibold">
             <i class="bi bi-person-plus me-1"></i> Tambah Pejabat
         </a>
     </div>
 
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <table class="table table-hover align-middle text-nowrap">
                 <thead class="table-light">
                     <tr>
-                        <th scope="col" style="width: 5%;">#</th>
-                        <th scope="col" style="width: 20%;">NIP / NIDN</th>
-                        <th scope="col" style="width: 25%;">Nama Lengkap</th>
-                        <th scope="col" style="width: 20%;">Jabatan</th>
-                        <th scope="col" style="width: 15%;">No. Telepon</th>
-                        <th scope="col" style="width: 20%;">Email</th>
-                        <th scope="col" style="width: 15%;">Status Akun</th>
-                        <th scope="col" style="width: 20%;" class="text-center">Aksi</th>
+                        <th style="width:4%">#</th>
+                        <th style="width:14%">NIP / NIDN</th>
+                        <th style="width:20%">Nama Lengkap</th>
+                        <th style="width:18%">Jabatan</th>
+                        <th style="width:14%">No. Telepon</th>
+                        <th style="width:18%">Email</th>
+                        <th style="width:8%">Status</th>
+                        <th style="width:10%" class="text-center">Aksi</th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    @foreach($pejabat as $index => $item)
+                    @forelse ($pejabat as $index => $item)
                         <tr>
-                            <th scope="row">{{ $index + 1 }}</th>
+                            <td>{{ $index + 1 }}</td>
+
                             <td>{{ $item->nip_atau_nidn }}</td>
-                            <td>{{ $item->nama_lengkap }}</td>
-                            <td>{{ $item->masterJabatan->nama_jabatan }}</td>
-                            <td>{{ $item->no_telepon ?? '-' }}</td>
-                            <td>{{ $item->user->email }}</td>
+
+                            <td class="fw-semibold">
+                                {{ $item->nama_lengkap }}
+                            </td>
+
+                            {{-- JABATAN + WILAYAH (DIGABUNG BIAR CAKEP) --}}
                             <td>
-                                @if($item->user->is_active)
-                                    <span class="badge bg-success">Aktif</span> <!-- Status Aktif -->
+                                <div class="fw-semibold">
+                                    {{ $item->masterJabatan->nama_jabatan }}
+                                </div>
+                                <small class="text-muted">
+                                    @if ($item->program_studi_id)
+                                        {{ $item->programStudi->nama_prodi }}
+                                    @elseif ($item->fakultas_id)
+                                        {{ $item->fakultas->nama_fakultas }}
+                                    @else
+                                        -
+                                    @endif
+                                </small>
+                            </td>
+
+                            <td>{{ $item->no_telepon ?? '-' }}</td>
+
+                            <td>{{ $item->user->email }}</td>
+
+                            <td>
+                                @if ($item->user->is_active)
+                                    <span class="badge rounded-pill bg-success-subtle text-success">
+                                        Aktif
+                                    </span>
                                 @else
-                                    <span class="badge bg-danger">Tidak Aktif</span> <!-- Status Tidak Aktif -->
+                                    <span class="badge rounded-pill bg-danger-subtle text-danger">
+                                        Tidak Aktif
+                                    </span>
                                 @endif
                             </td>
+
+                            {{-- AKSI ICON ONLY --}}
                             <td class="text-center">
-                                <div class="d-flex justify-content-center">
-                                    <a href="{{ route('admin_akademik.pejabat.edit', $item->id) }}" class="btn btn-warning btn-sm me-2" title="Edit">
-                                        <i class="bi bi-pencil-square"></i> Edit
+                                <div class="btn-group" role="group">
+                                    <a href="{{ route('admin_akademik.pejabat.edit', $item->id) }}"
+                                       class="btn btn-outline-warning btn-sm"
+                                       title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
                                     </a>
 
-                                    {{-- Tombol Delete --}}
-                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $item->id }}" title="Hapus">
-                                        <i class="bi bi-trash"></i> Hapus
+                                    <button type="button"
+                                            class="btn btn-outline-danger btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal{{ $item->id }}"
+                                            title="Hapus">
+                                        <i class="bi bi-trash"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                Data pejabat belum tersedia
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
-<!-- Modal Konfirmasi Hapus -->
-@foreach($pejabat as $item)
-<div class="modal fade" id="deleteModal{{ $item->id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+{{-- MODAL HAPUS --}}
+@foreach ($pejabat as $item)
+<div class="modal fade" id="deleteModal{{ $item->id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Konfirmasi Hapus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
             <div class="modal-body">
-                Apakah Anda yakin ingin menghapus pejabat ini?
+                Apakah Anda yakin ingin menghapus pejabat
+                <strong>{{ $item->nama_lengkap }}</strong>?
             </div>
+
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                    Batal
+                </button>
                 <form action="{{ route('admin_akademik.pejabat.destroy', $item->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Hapus</button>
+                    <button class="btn btn-danger btn-sm">
+                        Hapus
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 @endforeach
-
 @endsection

@@ -54,7 +54,7 @@ class MahasiswaController extends Controller
     public function index()
     {
         // Mengambil semua data mahasiswa dengan relasi program studi dan user
-        $mahasiswas = Mahasiswa::with('programStudi', 'user')->get();
+        $mahasiswas = Mahasiswa::with('programStudi', 'user')->paginate(10);
         return view('admin_akademik.mahasiswa.index', compact('mahasiswas'));
     }
 
