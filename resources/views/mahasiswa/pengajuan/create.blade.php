@@ -8,7 +8,7 @@
     <div class="col-lg-8">
         <div class="card shadow-sm">
             <div class="card-body">
-                <form action="{{ route('mahasiswa.pengajuan.store') }}" method="POST">
+                <form action="{{ route('mahasiswa.pengajuan.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     
                     <!-- 1. Jenis Surat (Pemicu) -->
@@ -123,10 +123,35 @@
                             <label for="dinamis_${field.name}" class="form-label">${field.label} <span class="text-danger">*</span></label>`;
                         
                         if(field.type === 'textarea') {
-                             fieldHtml += `<textarea class="form-control" id="dinamis_${field.name}" name="data_pendukung[${field.name}]" required></textarea>`;
-                        } else {
-                             fieldHtml += `<input type="${field.type}" class="form-control" id="dinamis_${field.name}" name="data_pendukung[${field.name}]" required>`;
-                        }
+
+    fieldHtml += `<textarea class="form-control" id="dinamis_${field.name}" name="data_pendukung[${field.name}]" required></textarea>`;
+
+} else if(field.type === 'file') {
+
+    fieldHtml += `<input type="file" class="form-control" id="dinamis_${field.name}" name="data_pendukung[${field.name}]" required>`;
+
+} else if(field.type === 'date') {
+
+    const today = new Date().toISOString().split('T')[0];
+
+    fieldHtml += `<input 
+        type="date" 
+        class="form-control" 
+        id="dinamis_${field.name}" 
+        name="data_pendukung[${field.name}]" 
+        min="${today}"
+        required>`;
+
+} else {
+
+    fieldHtml += `<input 
+        type="${field.type}" 
+        class="form-control" 
+        id="dinamis_${field.name}" 
+        name="data_pendukung[${field.name}]" 
+        required>`;
+
+}
                         
                         fieldHtml += `</div>`;
                         container.innerHTML += fieldHtml;

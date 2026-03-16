@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers\AdminAkademik;
-
+use App\Imports\MahasiswaImport;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\Request;
 use App\Models\Mahasiswa;
 use App\Models\User;
 use App\Models\ProgramStudi;
@@ -101,7 +103,25 @@ class MahasiswaController extends Controller
 
         return redirect()->route('admin_akademik.mahasiswa.index')->with('success', 'Data mahasiswa berhasil diperbarui!');
     }
+public function import(Request $request)
+{
+    $request->validate([
+        'file' => 'required|mimes:xlsx,csv|max:2048'
+    ]);
 
+    try {
+
+        Excel::import(new MahasiswaImport, $request->file('file'));
+
+        return redirect()->route('admin_akademik.mahasiswa.index')
+            ->with('success', 'Data mahasiswa berhasil diimport!');
+
+    } catch (\Exception $e) {
+
+        return redirect()->back()
+            ->with('error', 'Import gagal. Pastikan format file benar.');
+    }
+}
     // Menghapus data mahasiswa
     public function destroy($id)
     {

@@ -34,32 +34,62 @@ class PengajuanController extends Controller
      * Menyimpan pengajuan baru ke database.
      */
     public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'jenis_surat_id' => 'required|exists:jenis_surat,id',
-            'keperluan' => 'required|string|min:10',
-            'metode_pengambilan' => 'required|in:digital,cetak',
-            'data_pendukung' => 'nullable|array' // Validasi data dinamis (jika perlu)
+{
+    $request->validate([
+        'jenis_surat_id' => 'required|exists:jenis_surat,id',
+        'keperluan' => 'required|string|min:10',
+        'metode_pengambilan' => 'required|in:digital,cetak',
+        'data_pendukung' => 'nullable|array'
+    ]);
+
+    try {
+
+        $dataPendukung = [];
+
+        if ($request->has('data_pendukung')) {
+
+            foreach ($request->data_pendukung as $key => $value) {
+
+                // Jika field adalah file
+                if ($request->hasFile("data_pendukung.$key")) {
+
+                    $file = $request->file("data_pendukung.$key");
+
+                    $path = $file->store('dokumen_pengajuan', 'public');
+
+                    $dataPendukung[$key] = $path;
+
+                } else {
+
+                    $dataPendukung[$key] = $value;
+
+                }
+            }
+
+        }
+
+        PengajuanSurat::create([
+            'mahasiswa_id' => Auth::user()->mahasiswa->id,
+            'jenis_surat_id' => $request->jenis_surat_id,
+            'keperluan' => $request->keperluan,
+            'metode_pengambilan' => $request->metode_pengambilan,
+            'data_pendukung' => $dataPendukung,
+            'status_pengajuan' => 'pending',
+            'tanggal_pengajuan' => now(),
         ]);
 
-        try {
-            PengajuanSurat::create([
-                'mahasiswa_id' => Auth::user()->mahasiswa->id,
-                'jenis_surat_id' => $request->jenis_surat_id,
-                'keperluan' => $request->keperluan,
-                'metode_pengambilan' => $request->metode_pengambilan,
-                'data_pendukung' => $request->data_pendukung, // Akan di-cast ke JSON oleh Model
-                'status_pengajuan' => 'pending', // Status awal
-                'tanggal_pengajuan' => now(),
-            ]);
+        return redirect()
+            ->route('mahasiswa.dashboard')
+            ->with('success', 'Surat berhasil diajukan. Silakan tunggu validasi staff.');
 
-            return redirect()->route('mahasiswa.dashboard')->with('success', 'Surat berhasil diajukan. Silakan tunggu validasi staff.');
+    } catch (\Exception $e) {
 
-        } catch (\Exception $e) {
-            // Log error
-            return back()->with('error', 'Terjadi kesalahan saat menyimpan pengajuan. Coba lagi.')->withInput();
-        }
+        return back()
+            ->with('error', 'Terjadi kesalahan saat menyimpan pengajuan. Coba lagi.')
+            ->withInput();
+
     }
+}
 
     /**
      * Menampilkan detail dan status tracking satu pengajuan.

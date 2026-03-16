@@ -6,11 +6,39 @@
 @section('content')
 <div class="card shadow-sm">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0 card-title"><i class="bi bi-person-vcard me-2"></i> Daftar Mahasiswa</h5>
+    
+    <h5 class="mb-0 card-title">
+        <i class="bi bi-person-vcard me-2"></i> Daftar Mahasiswa
+    </h5>
+
+    <div class="d-flex align-items-center gap-2">
+
+        <!-- FORM IMPORT -->
+        <form action="{{ route('admin_akademik.mahasiswa.import') }}" 
+              method="POST" 
+              enctype="multipart/form-data"
+              class="d-flex align-items-center gap-2">
+            @csrf
+
+            <input type="file" 
+                   name="file" 
+                   class="form-control form-control-sm"
+                   accept=".xlsx,.csv"
+                   required>
+
+            <button type="submit" class="btn btn-success btn-sm">
+                <i class="bi bi-upload me-1"></i> Import
+            </button>
+        </form>
+
+        <!-- TOMBOL TAMBAH -->
         <a href="{{ route('admin_akademik.mahasiswa.create') }}" class="btn btn-warning btn-sm">
             <i class="bi bi-person-plus me-1"></i> Tambah Mahasiswa
         </a>
+
     </div>
+
+</div>
 
     <div class="card-body">
         <div class="table-responsive">

@@ -180,6 +180,7 @@
                   <option value="textarea">Teks Panjang (Textarea)</option>
                   <option value="date">Tanggal (Date)</option>
                   <option value="number">Angka (Number)</option>
+                  <option value="file">Upload Dokumen</option>
               </select>
           </div>
       </div>

@@ -173,6 +173,9 @@ Route::put('admin-staff/{id}', [AdminStaffController::class, 'update'])->name('a
 Route::resource('mahasiswa', MahasiswaController::class); // CRUD untuk Mahasiswa
 Route::put('mahasiswa/{id}', [MahasiswaController::class, 'update'])->name('admin_akademik.mahasiswa.update');
 
+// ROUTE IMPORT MAHASISWA
+Route::post('mahasiswa/import', [MahasiswaController::class, 'import'])
+    ->name('mahasiswa.import');
         // CRUD untuk Jenis Surat (Katalog)
         Route::resource('jenis-surat', JenisSuratController::class);
 

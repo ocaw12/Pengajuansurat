@@ -33,12 +33,28 @@
                 @if($pengajuan->data_pendukung)
                     <hr>
                     <h6 class="text-muted">Data Pendukung:</h6>
-                    @foreach($pengajuan->data_pendukung as $key => $value)
-                    <div class="row mb-2">
-                        <div class="col-sm-4 text-muted">{{ Str::title(str_replace('_', ' ', $key)) }}</div>
-                        <div class="col-sm-8">{{ $value }}</div>
-                    </div>
-                    @endforeach
+                   @foreach($pengajuan->data_pendukung as $key => $value)
+<div class="row mb-2">
+    <div class="col-sm-4 text-muted">{{ Str::title(str_replace('_', ' ', $key)) }}</div>
+
+    <div class="col-sm-8">
+
+        @if(is_string($value) && Str::contains($value, 'dokumen_pengajuan'))
+
+            <a href="{{ asset('storage/'.$value) }}" target="_blank" class="btn btn-sm btn-primary">
+                <i class="bi bi-file-earmark-arrow-down me-1"></i> Lihat Dokumen
+            </a>
+
+        @else
+
+            {{ $value }}
+
+        @endif
+
+    </div>
+
+</div>
+@endforeach
                 @endif
             </div>
         </div>
