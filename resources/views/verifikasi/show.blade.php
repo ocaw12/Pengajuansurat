@@ -46,6 +46,7 @@
         display: grid;
         grid-template-columns: 1.1fr 1fr;
         gap: 20px;
+        align-items: start; /* Mencegah card kiri memanjang mengikuti kolom kanan */
     }
 
     @media (max-width: 768px) {
@@ -111,11 +112,6 @@
         color: #111827;
     }
 
-    .detail-muted {
-        color: #6b7280;
-        font-size: 0.85rem;
-    }
-
     .status-badge {
         display: inline-flex;
         align-items: center;
@@ -139,9 +135,30 @@
         background: #fffbeb;
         color: #92400e;
     }
-
     .status-pending .status-dot {
         background: #f59e0b;
+    }
+
+    .status-rejected {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+    .status-rejected .status-dot {
+        background: #ef4444;
+    }
+
+    .verifikasi-footer-note {
+        margin-top: 24px;
+        text-align: center;
+        font-size: 0.85rem;
+        color: #6b7280;
+    }
+
+    /* Pembungkus jika ada banyak approval */
+    .approval-list-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
     }
 </style>
 
@@ -160,7 +177,7 @@
 
     <div class="verifikasi-grid">
 
-        {{-- CARD DATA PENGAJUAN SURAT --}}
+        {{-- KOLOM KIRI: CARD DATA PENGAJUAN SURAT --}}
         <div class="card-verifikasi">
             <div class="card-verifikasi-header">
                 <h3 class="card-verifikasi-title">Data Pengajuan Surat</h3>
@@ -174,7 +191,7 @@
                 <div class="detail-label">Nama Mahasiswa</div>
                 <div class="detail-separator">:</div>
                 <div class="detail-value">
-                    {{ $pengajuanSurat->mahasiswa->nama_lengkap ?? '-' }}
+                    {{ $pengajuan->mahasiswa->nama_lengkap ?? '-' }}
                 </div>
             </div>
 
@@ -182,7 +199,7 @@
                 <div class="detail-label">NPM</div>
                 <div class="detail-separator">:</div>
                 <div class="detail-value">
-                    {{ $pengajuanSurat->mahasiswa->nim ?? '-' }}
+                    {{ $pengajuan->mahasiswa->nim ?? '-' }}
                 </div>
             </div>
 
@@ -190,106 +207,129 @@
                 <div class="detail-label">Jurusan</div>
                 <div class="detail-separator">:</div>
                 <div class="detail-value">
-                    {{ $pengajuanSurat->mahasiswa->programStudi->nama_prodi ?? '-' }}
+                    {{ $pengajuan->mahasiswa->programStudi->nama_prodi ?? '-' }}
                 </div>
             </div>
 
             {{-- DATA SURAT --}}
-            <div class="detail-row">
+            <div class="detail-row mt-4">
                 <div class="detail-label">Judul Surat</div>
                 <div class="detail-separator">:</div>
-                <div class="detail-value">
-                    {{ $pengajuanSurat->jenisSurat->nama_surat ?? '-' }}
+                <div class="detail-value font-semibold">
+                    {{ $pengajuan->jenisSurat->nama_surat ?? '-' }}
                 </div>
             </div>
 
             <div class="detail-row">
-                <div class="detail-label">ID Pengajuan</div>
+                <div class="detail-label">ID / No Surat</div>
                 <div class="detail-separator">:</div>
                 <div class="detail-value">
-                    {{ $pengajuanSurat->nomor_surat ?? '-' }}
+                    {{ $pengajuan->nomor_surat ?? '-' }}
                 </div>
             </div>
 
             <div class="detail-row">
-                <div class="detail-label">Tanggal Pengajuan</div>
+                <div class="detail-label">Tgl Pengajuan</div>
                 <div class="detail-separator">:</div>
                 <div class="detail-value">
-                    {{ optional($pengajuanSurat->tanggal_pengajuan)->format('d-m-Y') ?? '-' }}
+                    {{ optional($pengajuan->created_at)->format('d-m-Y') ?? '-' }}
                 </div>
             </div>
 
             <div class="detail-row">
-                <div class="detail-label">Status Pengajuan</div>
+                <div class="detail-label">Status Akhir</div>
                 <div class="detail-separator">:</div>
                 <div class="detail-value">
-                    <span class="status-badge">
+                    <span class="status-badge {{ $pengajuan->status_pengajuan == 'selesai' ? '' : 'status-pending' }}">
                         <span class="status-dot"></span>
-                        {{ $pengajuanSurat->status_pengajuan ?? '-' }}
+                        {{ strtoupper(str_replace('_', ' ', $pengajuan->status_pengajuan ?? '-')) }}
                     </span>
                 </div>
             </div>
         </div>
 
-        {{-- CARD DATA APPROVAL --}}
-        <div class="card-verifikasi">
-            <div class="card-verifikasi-header">
-                <h3 class="card-verifikasi-title">Data Approval Pejabat</h3>
-                <span class="card-verifikasi-pill">Approval</span>
-            </div>
 
-            <hr class="verifikasi-divider">
+        {{-- KOLOM KANAN: LIST DATA APPROVAL PEJABAT --}}
+        <div class="approval-list-wrapper">
+            @if($pengajuan->approvalPejabats && count($pengajuan->approvalPejabats) > 0)
+                @foreach($pengajuan->approvalPejabats->sortBy('urutan_approval') as $index => $approval)
+                    <div class="card-verifikasi">
+                        <div class="card-verifikasi-header">
+                            <h3 class="card-verifikasi-title">Persetujuan #{{ $index + 1 }}</h3>
+                            <span class="card-verifikasi-pill">Approval Pejabat</span>
+                        </div>
 
-            <div class="detail-row">
-                <div class="detail-label">Nama Pejabat</div>
-                <div class="detail-separator">:</div>
-                <div class="detail-value">
-                    {{ $pejabat->nama_lengkap ?? '-' }}
+                        <hr class="verifikasi-divider">
+
+                        <div class="detail-row">
+                            <div class="detail-label">Nama Pejabat</div>
+                            <div class="detail-separator">:</div>
+                            <div class="detail-value font-medium">
+                                {{ $approval->pejabat->nama_lengkap ?? '-' }}
+                            </div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">Jabatan</div>
+                            <div class="detail-separator">:</div>
+                            <div class="detail-value">
+                                {{ $approval->pejabat->masterJabatan->nama_jabatan ?? '-' }}
+                            </div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">NIP / NIDN</div>
+                            <div class="detail-separator">:</div>
+                            <div class="detail-value">
+                                {{ $approval->pejabat->nip_atau_nidn ?? '-' }}
+                            </div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">Status</div>
+                            <div class="detail-separator">:</div>
+                            <div class="detail-value">
+                                @php
+                                    $statusClass = '';
+                                    if(strtolower($approval->status_approval) == 'ditolak') {
+                                        $statusClass = 'status-rejected';
+                                    } elseif(strtolower($approval->status_approval) != 'disetujui') {
+                                        $statusClass = 'status-pending';
+                                    }
+                                @endphp
+                                <span class="status-badge {{ $statusClass }}">
+                                    <span class="status-dot"></span>
+                                    {{ ucfirst($approval->status_approval ?? 'Menunggu') }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">Tanggal</div>
+                            <div class="detail-separator">:</div>
+                            <div class="detail-value">
+                                @if($approval->status_approval == 'disetujui' || $approval->status_approval == 'ditolak')
+                                    {{ optional($approval->updated_at)->format('d-m-Y H:i:s') ?? '-' }}
+                                @else
+                                    -
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">Catatan</div>
+                            <div class="detail-separator">:</div>
+                            <div class="detail-value text-gray-500 italic">
+                                {{ $approval->catatan_pejabat ?? 'Tidak ada catatan.' }}
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @else
+                <div class="card-verifikasi text-center text-gray-500 py-8">
+                    Belum ada data approval untuk surat ini.
                 </div>
-            </div>
-
-            <div class="detail-row">
-                <div class="detail-label">Jabatan</div>
-                <div class="detail-separator">:</div>
-                <div class="detail-value">
-                    {{ $pejabat->masterJabatan->nama_jabatan ?? '-' }}
-                </div>
-            </div>
-
-            <div class="detail-row">
-                <div class="detail-label">NIP / NIDN</div>
-                <div class="detail-separator">:</div>
-                <div class="detail-value">
-                    {{ $pejabat->nip_atau_nidn ?? '-' }}
-                </div>
-            </div>
-
-            <div class="detail-row">
-                <div class="detail-label">Status Approval</div>
-                <div class="detail-separator">:</div>
-                <div class="detail-value">
-                    <span class="status-badge status-pending">
-                        <span class="status-dot"></span>
-                        {{ $approval->status_approval ?? '-' }}
-                    </span>
-                </div>
-            </div>
-
-            <div class="detail-row">
-                <div class="detail-label">Tanggal Approval</div>
-                <div class="detail-separator">:</div>
-                <div class="detail-value">
-                    {{ optional($approval->tanggal_approval)->format('d-m-Y H:i:s') ?? '-' }}
-                </div>
-            </div>
-
-            <div class="detail-row">
-                <div class="detail-label">Catatan</div>
-                <div class="detail-separator">:</div>
-                <div class="detail-value">
-                    {{ $approval->catatan_pejabat ?? 'Tidak ada catatan.' }}
-                </div>
-            </div>
+            @endif
         </div>
 
     </div>

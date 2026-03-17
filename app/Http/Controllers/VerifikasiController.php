@@ -10,24 +10,18 @@ class VerifikasiController extends Controller
     /**
      * Menampilkan halaman verifikasi berdasarkan kode verifikasi
      */
-    public function show(Request $request, $kode_verifikasi)
+    public function show($kode_verifikasi)
     {
-        // Ambil data ApprovalPejabat berdasarkan kode_verifikasi
-        $approval = ApprovalPejabat::where('kode_verifikasi', $kode_verifikasi)->first();
+        // Mencari data approval berdasarkan kode verifikasi dari QR Code
+        $approval = \App\Models\ApprovalPejabat::where('kode_verifikasi', $kode_verifikasi)->firstOrFail();
+        
+        // Memuat data pengajuan surat beserta SEMUA approval-nya
+        $pengajuan = $approval->pengajuanSurat()->with([
+            'mahasiswa', 
+            'jenisSurat', 
+            'approvalPejabats.pejabat.masterJabatan' // <-- Pastikan relasi ini di-load
+        ])->firstOrFail();
 
-        if (!$approval) {
-            abort(404, 'Verifikasi tidak ditemukan.');
-        }
-
-        // Ambil data pengajuan surat dan pejabat terkait
-        $pengajuanSurat = $approval->pengajuanSurat;
-        $pejabat = $approval->pejabat;
-
-        // Kirim data ke view untuk ditampilkan
-        return view('verifikasi.show', [
-            'approval' => $approval,
-            'pengajuanSurat' => $pengajuanSurat,
-            'pejabat' => $pejabat,
-        ]);
+        return view('verifikasi.show', compact('pengajuan'));
     }
 }
