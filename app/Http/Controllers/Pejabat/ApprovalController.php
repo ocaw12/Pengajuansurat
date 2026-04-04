@@ -62,6 +62,10 @@ class ApprovalController extends Controller
 
         return view('pejabat.approval.riwayat', compact('riwayats'));
     }
+    public function detailRiwayat(PengajuanSurat $pengajuan)
+{
+    return view('pejabat.approval.detail', compact('pengajuan'));
+}
 
     /**
      * Menampilkan detail surat untuk ditinjau pejabat.

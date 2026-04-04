@@ -108,10 +108,17 @@ Route::middleware(['auth'])->group(function () {
         // Dashboard staff = halaman antrian validasi
  Route::get('/dashboard', [StaffDashboard::class, 'index'])
         ->name('dashboard');           // Rute untuk validasi
+          // ✅ TAMBAHAN RIWAYAT (INI YANG BARU)
+    Route::get('/validasi/riwayat', [ValidasiController::class, 'riwayat'])
+        ->name('validasi.riwayat');
+        Route::get('/validasi/riwayat/{pengajuan}', 
+    [ValidasiController::class, 'detailRiwayat']
+)->name('validasi.detailRiwayat');
         Route::get('/validasi', [ValidasiController::class, 'index'])->name('validasi.index');
         Route::get('/validasi/{pengajuan}', [ValidasiController::class, 'show'])->name('validasi.show');
         Route::post('/validasi/{pengajuan}', [ValidasiController::class, 'validateSubmission'])->name('validasi.submit');
-     // Rute untuk fitur cetak (menggunakan ValidasiController)
+   
+        // Rute untuk fitur cetak (menggunakan ValidasiController)
         Route::get('/perlu-dicetak', [ValidasiController::class, 'indexCetak'])->name('cetak.index'); // <-- Antrian Perlu Cetak
         Route::post('/tandai-siap-diambil/{pengajuan}', [ValidasiController::class, 'tandaiSiapDiambil'])->name('cetak.siapDiambil'); // <-- Aksi kirim WA
         
@@ -137,6 +144,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/approval', [ApprovalController::class, 'index'])->name('approval.antrian');
         Route::get('/approval/riwayat', [ApprovalController::class, 'riwayat'])
             ->name('approval.riwayat');
+
+    // 🔥 DETAIL RIWAYAT (WAJIB DI ATAS)
+    Route::get('/approval/riwayat/{pengajuan}', 
+        [ApprovalController::class, 'detailRiwayat'])
+        ->name('approval.detail');
+            
+            
         // Rute untuk approval
         Route::get('/approval/{approval}', [ApprovalController::class, 'show'])->name('approval.show');
         Route::post('/approval/{approval}', [ApprovalController::class, 'approveOrReject'])->name('approval.submit');

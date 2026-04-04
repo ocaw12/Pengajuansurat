@@ -133,7 +133,26 @@ class ValidasiController extends Controller
 
         return redirect()->route('staff_jurusan.cetak.index')->with('success', 'Status diubah ke "Siap Diambil" dan notifikasi WA telah dikirim ke mahasiswa.');
     }
+public function riwayat(): View
+{
+    $programStudiId = Auth::user()->adminStaff->program_studi_id;
 
+    $riwayat = PengajuanSurat::whereNotNull('admin_validator_id') // sudah divalidasi staff
+        ->whereHas('mahasiswa', function ($query) use ($programStudiId) {
+            $query->where('program_studi_id', $programStudiId);
+        })
+        ->with('mahasiswa', 'jenisSurat')
+        ->latest('updated_at')
+        ->get();
+
+    return view('staff_jurusan.validasi.riwayat', compact('riwayat'));
+}
+public function detailRiwayat(PengajuanSurat $pengajuan): View
+{
+    $this->authorizeStaff($pengajuan);
+
+    return view('staff_jurusan.validasi.detail', compact('pengajuan'));
+}
     public function indexPengambilan(): View
     {
          $programStudiId = Auth::user()->adminStaff->program_studi_id;

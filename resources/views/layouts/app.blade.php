@@ -278,11 +278,28 @@
                  </li>
                     <li class="nav-heading"><span>Utama</span></li>
                     <li class="nav-item">
-                    <a href="{{ route('staff_jurusan.validasi.index') }}" class="nav-link {{ request()->routeIs('staff_jurusan.validasi.*') ? 'active' : '' }}">
-                        <i class="bi bi-clipboard-check"></i><span>Antrian Validasi</span>
-                    </a>
+                    <a href="{{ route('staff_jurusan.validasi.index') }}" 
+   class="nav-link {{ 
+       request()->routeIs('staff_jurusan.validasi.index') || 
+       request()->routeIs('staff_jurusan.validasi.show') 
+       ? 'active' : '' 
+   }}">
+    <i class="bi bi-clipboard-check"></i>
+    <span>Antrian Validasi</span>
+</a>
                 </li>
                  </li>
+                 <li class="nav-item">
+    <a href="{{ route('staff_jurusan.validasi.riwayat') }}" 
+   class="nav-link {{ 
+       request()->routeIs('staff_jurusan.validasi.riwayat') || 
+       request()->routeIs('staff_jurusan.validasi.detailRiwayat') 
+       ? 'active' : '' 
+   }}">
+    <i class="bi bi-clock-history"></i>
+    <span>Riwayat Validasi</span>
+</a>
+</li>
                  <li class="nav-item">
                     <a href="{{ route('staff_jurusan.cetak.index') }}" class="nav-link {{ request()->routeIs('staff_jurusan.cetak.index') ? 'active' : '' }}">
                         <i class="bi bi-printer"></i><span>Perlu Dicetak</span>
