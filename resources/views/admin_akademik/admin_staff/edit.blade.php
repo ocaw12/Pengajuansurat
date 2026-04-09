@@ -2,112 +2,155 @@
 
 @section('title', 'Edit Staff')
 
+@push('styles')
+<style>
+    /* Hilangkan padding default body agar rapat ke atas */
+    .container-fluid { max-width: 1300px; padding-top: 0.5rem !important; }
+    
+    /* Header ringkas konsisten dengan Pejabat & Tambah Staff */
+    .page-header {
+        background: #fff;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        border: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card { border: none; border-radius: 12px; background: #fff; margin-bottom: 0; }
+    
+    /* Judul seksi warna kuning f59e0b sesuai tema */
+    .form-section-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #f59e0b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    .form-section-title::after {
+        content: ""; flex: 1; height: 1px; background: #f1f5f9; margin-left: 1rem;
+    }
+
+    .form-label { font-weight: 600; color: #334155; font-size: 0.8rem; margin-bottom: 0.3rem; }
+    .form-control, .form-select { 
+        border-radius: 8px; border: 1.5px solid #e2e8f0; padding: 0.5rem 0.8rem; background-color: #f8fafc; font-size: 0.9rem;
+    }
+
+    .status-card {
+        background: #fff9ed;
+        border: 1px solid #fef3c7;
+        border-radius: 10px;
+        padding: 1rem;
+    }
+    
+    .row-main { display: flex; align-items: stretch; }
+</style>
+@endpush
+
 @section('content')
-<div class="card shadow-sm">
-    <div class="card-header bg-warning text-black">
-        <h5 class="m-0">Edit Staff</h5>
+<div class="container-fluid">
+    
+    <div class="page-header shadow-sm">
+        <div>
+            <h4 class="fw-bold text-dark mb-0">
+                <i class="bi bi-pencil-square me-2 text-warning"></i>Edit Data Staff
+            </h4>
+            <p class="text-muted small mb-0">Perbarui informasi identitas atau penempatan staff administrasi.</p>
+        </div>
+        <div class="d-none d-md-block">
+            <a href="{{ route('admin_akademik.admin-staff.index') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar
+            </a>
+        </div>
     </div>
-    <div class="card-body">
-        <!-- Notifikasi sukses -->
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
 
-        <!-- Form Edit Staff -->
-        <form action="{{ route('admin_akademik.admin-staff.update', $adminStaff->id) }}" method="POST">
-            @csrf
-            @method('PUT')
+    <form action="{{ route('admin_akademik.admin-staff.update', $adminStaff->id) }}" method="POST">
+        @csrf
+        @method('PUT')
+        
+        <div class="row row-main">
+            {{-- KOLOM KIRI: INFORMASI PRIBADI --}}
+            <div class="col-lg-7">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="form-section-title">Informasi Pribadi</div>
+                        
+                        <div class="mb-3">
+                            <label for="nama_lengkap" class="form-label">Nama Lengkap & Gelar</label>
+                            <input type="text" class="form-control @error('nama_lengkap') is-invalid @enderror" 
+                                   name="nama_lengkap" value="{{ old('nama_lengkap', $adminStaff->nama_lengkap) }}" required>
+                            @error('nama_lengkap') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
 
-            <div class="form-group mb-3">
-                <label for="nip_staff" class="form-label">NIP Staff</label>
-                <input type="text" class="form-control @error('nip_staff') is-invalid @enderror" id="nip_staff" name="nip_staff"
-                       value="{{ old('nip_staff', $adminStaff->nip_staff) }}" required>
-                @error('nip_staff')
-                    <div class="invalid-feedback d-block">
-                        <i class="bi bi-exclamation-triangle me-1"></i>{{ $message }}
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="nip_staff" class="form-label">NIP Staff</label>
+                                <input type="text" class="form-control @error('nip_staff') is-invalid @enderror" 
+                                       name="nip_staff" value="{{ old('nip_staff', $adminStaff->nip_staff) }}" required>
+                                @error('nip_staff') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="no_telepon" class="form-label">No. WhatsApp</label>
+                                <input type="text" class="form-control @error('no_telepon') is-invalid @enderror" 
+                                       name="no_telepon" value="{{ old('no_telepon', $adminStaff->no_telepon) }}">
+                                @error('no_telepon') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+                        </div>
+
+                        <div class="mb-0">
+                            <label for="email" class="form-label">Email Institusi</label>
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                                   name="email" value="{{ old('email', $adminStaff->user->email) }}" required>
+                            @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
                     </div>
-                @enderror
+                </div>
             </div>
 
-            <div class="form-group mb-3">
-                <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
-                <input type="text" class="form-control @error('nama_lengkap') is-invalid @enderror" id="nama_lengkap" name="nama_lengkap"
-                       value="{{ old('nama_lengkap', $adminStaff->nama_lengkap) }}" required>
-                @error('nama_lengkap')
-                    <div class="invalid-feedback d-block">
-                        <i class="bi bi-exclamation-triangle me-1"></i>{{ $message }}
+            {{-- KOLOM KANAN: PENEMPATAN & UPDATE --}}
+            <div class="col-lg-5">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="form-section-title">Penempatan & Akses</div>
+                            
+                            <div class="mb-4">
+                                <label for="program_studi_id" class="form-label">Program Studi</label>
+                                <select name="program_studi_id" class="form-select @error('program_studi_id') is-invalid @enderror" required>
+                                    <option value="">-- Pilih Program Studi --</option>
+                                    @foreach($program_studis as $prodi)
+                                        <option value="{{ $prodi->id }}" 
+                                            {{ old('program_studi_id', $adminStaff->program_studi_id) == $prodi->id ? 'selected' : '' }}>
+                                            {{ $prodi->nama_prodi }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('program_studi_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+
+                            <div class="status-card">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="is_active" name="is_active" value="1" 
+                                        {{ old('is_active', $adminStaff->user->is_active) ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-bold text-dark small" for="is_active">Status Akun Aktif</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-warning w-100 py-2 fw-bold shadow-sm rounded-pill">
+                                <i class="bi bi-arrow-clockwise me-2"></i> UPDATE DATA STAFF
+                            </button>
+                        </div>
                     </div>
-                @enderror
+                </div>
             </div>
-
-            <div class="form-group mb-3">
-                <label for="no_telepon" class="form-label">No. Telepon</label>
-                <input type="text"
-                       class="form-control @error('no_telepon') is-invalid @enderror"
-                       id="no_telepon"
-                       name="no_telepon"
-                       value="{{ old('no_telepon', $adminStaff->no_telepon) }}"
-                       placeholder="Contoh: 081234567890">
-                @error('no_telepon')
-                    <div class="invalid-feedback d-block">
-                        <i class="bi bi-exclamation-triangle me-1"></i>{{ $message }}
-                    </div>
-                @enderror
-            </div>
-
-            <div class="form-group mb-3">
-                <label for="program_studi_id" class="form-label">Program Studi</label>
-                <select class="form-control @error('program_studi_id') is-invalid @enderror" id="program_studi_id" name="program_studi_id" required>
-                    <option value="">Pilih Program Studi</option>
-                    @foreach($program_studis as $programStudi)
-                        <option value="{{ $programStudi->id }}"
-                            {{ old('program_studi_id', $adminStaff->program_studi_id) == $programStudi->id ? 'selected' : '' }}>
-                            {{ $programStudi->nama_prodi }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('program_studi_id')
-                    <div class="invalid-feedback d-block">
-                        <i class="bi bi-exclamation-triangle me-1"></i>{{ $message }}
-                    </div>
-                @enderror
-            </div>
-
-            <div class="form-group mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email"
-                       value="{{ old('email', $adminStaff->user->email) }}" required>
-                @error('email')
-                    <div class="invalid-feedback d-block">
-                        <i class="bi bi-exclamation-triangle me-1"></i>{{ $message }}
-                    </div>
-                @enderror
-            </div>
-
-            {{-- Akun Aktif --}}
-            <div class="form-group form-check mt-2 mb-3">
-                <input
-                    type="checkbox"
-                    class="form-check-input @error('is_active') is-invalid @enderror"
-                    id="is_active"
-                    name="is_active"
-                    value="1"
-                    {{ old('is_active', $adminStaff->user->is_active) ? 'checked' : '' }}
-                >
-                <label class="form-check-label" for="is_active">Akun aktif</label>
-                @error('is_active')
-                    <div class="text-danger d-block">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <button type="submit" class="btn btn-warning mt-3">
-                <i class="bi bi-pencil-square"></i> Update Staff
-            </button>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
-
 @endsection

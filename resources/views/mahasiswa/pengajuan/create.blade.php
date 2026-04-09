@@ -3,168 +3,214 @@
 @section('title', 'Buat Pengajuan Baru')
 @section('page-title', 'Formulir Pengajuan Surat Baru')
 
+@push('styles')
+<style>
+    /* 1. Full Width Layout */
+    .card { border: none; border-radius: 12px; width: 100%; }
+    .card-body { padding: 1.75rem; }
+
+    /* 2. Input & Label Rapi */
+    .form-label { font-size: 0.8rem; color: #475569; margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 0.65rem 1rem;
+        font-size: 0.95rem;
+        border-color: #e2e8f0;
+        background-color: #fff;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* 3. Method Card (Radio) - Proporsional */
+    .method-card {
+        border: 2px solid #f1f5f9;
+        border-radius: 10px;
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+        height: 100%;
+    }
+    .method-card i { font-size: 1.5rem; display: block; margin-bottom: 5px; color: #64748b; }
+    .method-card span { font-size: 0.9rem; font-weight: 600; display: block; }
+    
+    .form-check-input:checked + .method-card {
+        border-color: #3b82f6;
+        background-color: #eff6ff;
+    }
+    .form-check-input:checked + .method-card i { color: #3b82f6; }
+    .form-check-input { display: none; }
+
+    /* 4. Dynamic Container */
+    #form-dinamis-container {
+        border: 1px dashed #cbd5e1;
+        background-color: #f8fafc;
+        border-radius: 12px;
+    }
+
+    /* 5. Submit Button - Elegan & Tidak Raksasa */
+    .btn-submit { 
+        border-radius: 8px; 
+        padding: 0.7rem 2rem; 
+        font-weight: 600; 
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+    }
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2); }
+</style>
+@endpush
+
 @section('content')
-<div class="row">
-    <div class="col-lg-8">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <form action="{{ route('mahasiswa.pengajuan.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    
-                    <!-- 1. Jenis Surat (Pemicu) -->
-                    <div class="mb-3">
-                        <label for="jenis_surat_id" class="form-label fw-bold">Pilih Jenis Surat <span class="text-danger">*</span></label>
-                        <select class="form-select" id="jenis_surat_id" name="jenis_surat_id" required>
-                            <option value="" selected disabled>-- Pilih salah satu --</option>
-                            @foreach($jenis_surats as $jenis)
-                                <option value="{{ $jenis->id }}">{{ $jenis->nama_surat }}</option>
-                            @endforeach
-                        </select>
+<div class="container-fluid p-0">
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            @if ($errors->any())
+                <div class="alert alert-danger border-0 rounded-3 p-3 mb-4 shadow-sm">
+                    <div class="d-flex align-items-center mb-1">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i>
+                        <strong class="small">Mohon perbaiki kesalahan berikut:</strong>
                     </div>
+                    <ul class="mb-0 small ps-4">
+                        @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
+                    </ul>
+                </div>
+            @endif
 
-                    <!-- 2. Keperluan Standar -->
-                    <div class="mb-3">
-                        <label for="keperluan" class="form-label fw-bold">Jelaskan Keperluan Anda <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="keperluan" name="keperluan" rows="3" placeholder="Contoh: Untuk syarat mendaftar beasiswa..." required></textarea>
-                    </div>
-
-                    <!-- 3. Metode Pengambilan -->
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Metode Pengambilan <span class="text-danger">*</span></label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="metode_pengambilan" id="metode_digital" value="digital" checked>
-                            <label class="form-check-label" for="metode_digital">
-                                Digital (Download PDF)
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="metode_pengambilan" id="metode_cetak" value="cetak">
-                            <label class="form-check-label" for="metode_cetak">
-                                Cetak (Ambil di Ruang Staff Jurusan)
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- 4. Kontainer untuk Form Dinamis -->
-                    <hr>
-                    <div id="form-dinamis-container" class="mb-3">
-                        <!-- Field tambahan akan muncul di sini -->
-                    </div>
-
-                    <!-- 5. Tombol Submit -->
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-send me-2"></i> Ajukan Surat
-                        </button>
-                    </div>
-                    @if ($errors->any())
-                        <div class="alert alert-danger" role="alert">
-                            <h5 class="alert-heading">Gagal Mengajukan!</h5>
-                            <p>Pastikan semua data terisi dengan benar:</p>
-                            <hr>
-                            <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
+            <form action="{{ route('mahasiswa.pengajuan.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                
+                <div class="row g-4">
+                    <div class="col-md-8">
+                        <div class="mb-4">
+                            <label for="jenis_surat_id" class="form-label">1. Jenis Dokumen <span class="text-danger">*</span></label>
+                            <select class="form-select @error('jenis_surat_id') is-invalid @enderror" id="jenis_surat_id" name="jenis_surat_id" required>
+                                <option value="" selected disabled>Pilih kategori surat yang ingin diajukan...</option>
+                                @foreach($jenis_surats as $jenis)
+                                    <option value="{{ $jenis->id }}" {{ old('jenis_surat_id') == $jenis->id ? 'selected' : '' }}>
+                                        {{ $jenis->nama_surat }}
+                                    </option>
                                 @endforeach
-                            </ul>
+                            </select>
                         </div>
-                    @endif
 
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4">
-        <div class="alert alert-primary" role="alert">
-            <h4 class="alert-heading"><i class="bi bi-info-circle-fill"></i> Perhatian!</h4>
-            <p>Pastikan semua data yang Anda masukkan sudah benar sebelum diajukan.</p>
-            <hr>
-            <p class="mb-0">Data yang tidak valid atau salah akan memperlambat proses validasi dan approval.</p>
+                        <div class="mb-4">
+                            <label for="keperluan" class="form-label">2. Deskripsi Keperluan <span class="text-danger">*</span></label>
+                            <textarea class="form-control @error('keperluan') is-invalid @enderror" 
+                                      id="keperluan" name="keperluan" rows="4" 
+                                      placeholder="Jelaskan alasan pengajuan secara detail..." required>{{ old('keperluan') }}</textarea>
+                        </div>
+
+                        <div id="form-dinamis-container" class="p-4 mb-4" style="display: none;">
+                            <h6 class="fw-bold text-primary mb-3 small text-uppercase letter-spacing-1">
+                                <i class="bi bi-patch-plus me-2"></i>Informasi Tambahan Dokumen
+                            </h6>
+                            <div id="dynamic-fields-wrapper"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="mb-4">
+                            <label class="form-label">3. Metode Pengambilan</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="w-100 mb-0">
+                                        <input class="form-check-input" type="radio" name="metode_pengambilan" value="digital" {{ old('metode_pengambilan', 'digital') == 'digital' ? 'checked' : '' }}>
+                                        <div class="method-card">
+                                            <i class="bi bi-cloud-check"></i>
+                                            <span>Digital</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="col-6">
+                                    <label class="w-100 mb-0">
+                                        <input class="form-check-input" type="radio" name="metode_pengambilan" value="cetak" {{ old('metode_pengambilan') == 'cetak' ? 'checked' : '' }}>
+                                        <div class="method-card">
+                                            <i class="bi bi-printer"></i>
+                                            <span>Cetak</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-3 rounded-3 bg-primary bg-opacity-10 border border-primary border-opacity-10 mb-4">
+                            <h6 class="fw-bold text-primary small mb-2"><i class="bi bi-info-circle-fill me-2"></i>Catatan Penting</h6>
+                            <p class="text-muted mb-0" style="font-size: 0.8rem; line-height: 1.5;">
+                                Pastikan deskripsi keperluan minimal sesuai aturan karakter. Inputan tambahan di kolom kiri akan otomatis tersimpan jika terjadi kesalahan kirim.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end align-items-center border-top pt-4 mt-2">
+                    <button type="submit" class="btn btn-primary btn-submit shadow-sm">
+                        <i class="bi bi-send-check-fill me-2"></i>Kirim Pengajuan
+                    </button>
+                </div>
+
+            </form>
         </div>
     </div>
 </div>
 @endsection
 
 @push('scripts')
-<!-- Script untuk form dinamis -->
 <script>
-    document.getElementById('jenis_surat_id').addEventListener('change', function() {
-        const jenisSuratId = this.value;
+    document.addEventListener('DOMContentLoaded', function() {
+        const jenisSuratSelect = document.getElementById('jenis_surat_id');
         const container = document.getElementById('form-dinamis-container');
-        
-        // Hapus field lama
-        container.innerHTML = '<p class="text-muted fst-italic">Memuat field tambahan...</p>';
+        const wrapper = document.getElementById('dynamic-fields-wrapper');
 
-        if (!jenisSuratId) {
-            container.innerHTML = '';
-            return;
+        // Menangkap input lama agar tidak reset
+        const oldData = @json(old('data_pendukung') ?? []);
+
+        function loadFields(id) {
+            if (!id) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'block';
+            wrapper.innerHTML = '<div class="text-center py-3"><div class="spinner-border spinner-border-sm text-primary"></div></div>';
+
+            fetch(`/mahasiswa/api/form-schema/${id}`)
+                .then(res => res.json())
+                .then(schema => {
+                    wrapper.innerHTML = '';
+                    if (schema && schema.length > 0) {
+                        schema.forEach(field => {
+                            const val = oldData[field.name] || '';
+                            let html = `<div class="mb-3">
+                                <label class="form-label small fw-bold">${field.label} <span class="text-danger">*</span></label>`;
+                            
+                            if(field.type === 'textarea') {
+                                html += `<textarea class="form-control" name="data_pendukung[${field.name}]" rows="2" required>${val}</textarea>`;
+                            } else if(field.type === 'file') {
+                                html += `<input type="file" class="form-control" name="data_pendukung[${field.name}]" required>`;
+                            } else {
+                                html += `<input type="${field.type}" class="form-control" name="data_pendukung[${field.name}]" value="${val}" required>`;
+                            }
+                            html += `</div>`;
+                            wrapper.innerHTML += html;
+                        });
+                    } else {
+                        container.style.display = 'none';
+                    }
+                })
+                .catch(() => {
+                    wrapper.innerHTML = '<div class="text-danger small">Gagal memuat field tambahan.</div>';
+                });
         }
 
-        // Ambil skema form dari server
-        // Pastikan Anda membuat rute ini di web.php:
-        // Route::get('/api/form-schema/{jenis_surat}', [PengajuanController::class, 'getFormSchema'])->name('api.form-schema');
-        
-        // Ganti URL ini agar sesuai dengan rute Anda
-        const url = `/mahasiswa/api/form-schema/${jenisSuratId}`;
+        jenisSuratSelect.addEventListener('change', function() {
+            loadFields(this.value);
+        });
 
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(schema => {
-                container.innerHTML = ''; // Bersihkan lagi
-                
-                if (schema && Array.isArray(schema) && schema.length > 0) {
-                    schema.forEach(field => {
-                        let fieldHtml = `<div class="mb-3">
-                            <label for="dinamis_${field.name}" class="form-label">${field.label} <span class="text-danger">*</span></label>`;
-                        
-                        if(field.type === 'textarea') {
-
-    fieldHtml += `<textarea class="form-control" id="dinamis_${field.name}" name="data_pendukung[${field.name}]" required></textarea>`;
-
-} else if(field.type === 'file') {
-
-    fieldHtml += `<input type="file" class="form-control" id="dinamis_${field.name}" name="data_pendukung[${field.name}]" required>`;
-
-} else if(field.type === 'date') {
-
-    const today = new Date().toISOString().split('T')[0];
-
-    fieldHtml += `<input 
-        type="date" 
-        class="form-control" 
-        id="dinamis_${field.name}" 
-        name="data_pendukung[${field.name}]" 
-        min="${today}"
-        required>`;
-
-} else {
-
-    fieldHtml += `<input 
-        type="${field.type}" 
-        class="form-control" 
-        id="dinamis_${field.name}" 
-        name="data_pendukung[${field.name}]" 
-        required>`;
-
-}
-                        
-                        fieldHtml += `</div>`;
-                        container.innerHTML += fieldHtml;
-                    });
-                } else {
-                    container.innerHTML = '<p class="text-muted fst-italic">Tidak ada data tambahan untuk surat ini.</p>';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching dynamic form:', error);
-                container.innerHTML = '<div class="alert alert-danger">Gagal memuat field tambahan. Pastikan rute API sudah benar.</div>';
-            });
+        if (jenisSuratSelect.value) {
+            loadFields(jenisSuratSelect.value);
+        }
     });
 </script>
 @endpush
-

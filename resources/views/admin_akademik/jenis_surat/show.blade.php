@@ -3,141 +3,202 @@
 @section('title', 'Detail Jenis Surat')
 @section('page-title', 'Detail Jenis Surat')
 
+@push('styles')
+<style>
+    /* Styling Timeline untuk Alur Approval */
+    .timeline-steps {
+        position: relative;
+        padding-left: 20px;
+        border-left: 2px dashed #dee2e6;
+        margin-left: 10px;
+    }
+    .timeline-item {
+        position: relative;
+        padding-bottom: 1.5rem;
+    }
+    .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: -27px;
+        top: 0;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: var(--bs-warning);
+        border: 2px solid white;
+    }
+    
+    .info-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+    
+    .template-box {
+        background-color: #f8f9fa;
+        font-family: 'Courier New', Courier, monospace;
+        border-left: 4px solid #0d6efd;
+        line-height: 1.6;
+    }
+
+    .field-card {
+        border-left: 4px solid #17a2b8;
+        transition: transform 0.2s;
+    }
+    .field-card:hover { transform: translateX(5px); }
+</style>
+@endpush
+
 @section('content')
 
-<div class="card shadow-sm mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0 card-title">
-            <i class="bi bi-file-earmark-text me-2"></i>
-            Detail Jenis Surat: {{ $jenisSurat->nama_surat }}
-        </h5>
+{{-- Header & Actions --}}
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="{{ route('admin_akademik.jenis-surat.index') }}">Jenis Surat</a></li>
+                <li class="breadcrumb-item active">Detail</li>
+            </ol>
+        </nav>
+        <h4 class="fw-bold mb-0">{{ $jenisSurat->nama_surat }}</h4>
+    </div>
+    <div class="col-auto d-flex gap-2">
+        <a href="{{ route('admin_akademik.jenis-surat.edit', $jenisSurat->id) }}" class="btn btn-warning rounded-pill px-3 shadow-sm">
+            <i class="bi bi-pencil-square me-1"></i> Edit
+        </a>
+        <button type="button" class="btn btn-danger rounded-pill px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <i class="bi bi-trash me-1"></i> Hapus
+        </button>
+        <a href="{{ route('admin_akademik.jenis-surat.index') }}" class="btn btn-light border rounded-pill px-3">
+            Kembali
+        </a>
+    </div>
+</div>
 
-        <div>
-            <a href="{{ route('admin_akademik.jenis-surat.edit', $jenisSurat->id) }}"
-               class="btn btn-warning btn-sm me-2">
-                <i class="bi bi-pencil-square me-1"></i> Edit
-            </a>
+<div class="row">
+    {{-- Kolom Kiri: Informasi Utama & Template --}}
+    <div class="col-lg-8">
+        {{-- Card: Informasi Dasar --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <h6 class="fw-bold mb-4"><i class="bi bi-info-circle text-primary me-2"></i>Informasi Umum</h6>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="info-label">Kode Surat</div>
+                        <div class="fw-bold fs-5 text-dark">{{ $jenisSurat->kode_surat }}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-label">Kategori</div>
+                        <div class="fw-bold fs-5 text-dark">{{ $jenisSurat->kategori }}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-label">Format Nomor</div>
+                        <div class="text-primary font-monospace small bg-primary-subtle p-1 rounded">{{ $jenisSurat->format_penomoran }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            <form action="{{ route('admin_akademik.jenis-surat.destroy', $jenisSurat->id) }}"
-                  method="POST" class="d-inline"
-                  onsubmit="return confirm('Yakin ingin menghapus jenis surat ini?')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger btn-sm">
-                    <i class="bi bi-trash me-1"></i> Hapus
-                </button>
-            </form>
-
-            <a href="{{ route('admin_akademik.jenis-surat.index') }}"
-               class="btn btn-secondary btn-sm ms-2">
-                Kembali
-            </a>
+        {{-- Card: Isi Template --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="fw-bold mb-0"><i class="bi bi-file-earmark-code text-primary me-2"></i>Template Konten</h6>
+            </div>
+            <div class="card-body pt-0">
+                <div class="p-4 rounded template-box shadow-inner">
+                    {!! nl2br(e($jenisSurat->isi_template)) !!}
+                </div>
+                <div class="mt-2 text-muted small italic">
+                    <i class="bi bi-info-circle"></i> Teks di dalam <code>[brackets]</code> akan diganti secara otomatis oleh sistem.
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="card-body">
-
-        {{-- ===================== --}}
-        {{-- Bagian 1: Detail Surat --}}
-        {{-- ===================== --}}
-        <h5 class="fw-bold mb-3">📄 Detail Informasi</h5>
-
-        <div class="row mb-4">
-            <div class="col-md-6 mb-2">
-                <p class="mb-1 fw-semibold">Nama Surat</p>
-                <div class="p-2 bg-light rounded">{{ $jenisSurat->nama_surat }}</div>
+    {{-- Kolom Kanan: Alur & Fields --}}
+    <div class="col-lg-4">
+        {{-- Card: Alur Approval --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="fw-bold mb-0"><i class="bi bi-diagram-3 text-warning me-2"></i>Alur Persetujuan</h6>
             </div>
-            <div class="col-md-3 mb-2">
-                <p class="mb-1 fw-semibold">Kode Surat</p>
-                <div class="p-2 bg-light rounded">
-                    <span class="badge bg-secondary">{{ $jenisSurat->kode_surat }}</span>
-                </div>
-            </div>
-            <div class="col-md-3 mb-2">
-                <p class="mb-1 fw-semibold">Kategori</p>
-                <div class="p-2 bg-light rounded">{{ $jenisSurat->kategori }}</div>
+            <div class="card-body">
+                @if($alurApprovals->count() > 0)
+                    <div class="timeline-steps">
+                        @foreach($alurApprovals as $step)
+                            <div class="timeline-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="fw-bold text-dark">{{ $step->masterJabatan->nama_jabatan }}</div>
+                                        <div class="text-muted" style="font-size: 0.8rem;">Scope: {{ $step->scope }}</div>
+                                    </div>
+                                    <span class="badge rounded-pill bg-warning-subtle text-warning border border-warning-subtle">Lvl {{ $step->urutan }}</span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-3">
+                        <i class="bi bi-slash-circle text-muted d-block fs-2 mb-2"></i>
+                        <p class="text-muted small">Belum ada alur approval.</p>
+                    </div>
+                @endif
             </div>
         </div>
 
-        <div class="mb-4">
-            <p class="mb-1 fw-semibold">Format Penomoran</p>
-            <div class="p-2 bg-light rounded">
-                <code>{{ $jenisSurat->format_penomoran }}</code>
+        {{-- Card: Field Tambahan --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="fw-bold mb-0"><i class="bi bi-plus-square text-info me-2"></i>Input Form</h6>
+            </div>
+            <div class="card-body pt-0">
+                @php
+                    $schema = is_string($jenisSurat->form_schema) ? json_decode($jenisSurat->form_schema, true) : $jenisSurat->form_schema;
+                @endphp
+
+                @if(!empty($schema) && is_array($schema))
+                    <div class="d-flex flex-column gap-2">
+                        @foreach($schema as $field)
+                            <div class="p-3 border rounded-3 bg-light field-card shadow-xs">
+                                <div class="d-flex justify-content-between">
+                                    <span class="fw-bold text-dark">{{ $field['label'] ?? 'Tanpa Label' }}</span>
+                                    @if(!empty($field['required'])) <span class="badge bg-danger-subtle text-danger" style="font-size: 0.6rem;">WAJIB</span> @endif
+                                </div>
+                                <code class="small text-info">[{{ $field['name'] ?? '-' }}]</code>
+                                <div class="mt-1">
+                                    <span class="badge bg-white border text-muted" style="font-size: 0.7rem;">{{ $field['type'] ?? 'text' }}</span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-muted small text-center py-2">Tidak ada field tambahan.</p>
+                @endif
             </div>
         </div>
-
-        {{-- ===================== --}}
-        {{-- Bagian 2: Template Surat --}}
-        {{-- ===================== --}}
-        <h5 class="fw-bold mb-3">📝 Isi Template Surat</h5>
-
-        <div class="p-3 border rounded bg-light mb-4" style="white-space: pre-line;">
-            {{ $jenisSurat->isi_template }}
-        </div>
-
-        {{-- ===================== --}}
-        {{-- Bagian 3: Field Tambahan --}}
-        {{-- ===================== --}}
-        <h5 class="fw-bold mb-3">🧩 Field Tambahan (Form Schema)</h5>
-
-        @php
-            // Normalisasi form_schema jadi array
-            $schema = $jenisSurat->form_schema;
-
-            if (is_string($schema)) {
-                $decoded = json_decode($schema, true);
-                $schema = is_array($decoded) ? $decoded : [];
-            } elseif (!is_array($schema)) {
-                $schema = [];
-            }
-        @endphp
-
-        @if(!empty($schema) && count($schema) > 0)
-            <ul class="list-group mb-4">
-                @foreach($schema as $field)
-                    <li class="list-group-item">
-                        <strong>{{ $field['label'] ?? '-' }}</strong> <br>
-                        Placeholder:
-                        <code>[{{ $field['name'] ?? '-' }}]</code> <br>
-                        Tipe Field:
-                        <span class="badge bg-info text-dark">{{ $field['type'] ?? '-' }}</span>
-                        @if(!empty($field['required']))
-                            <span class="badge bg-danger ms-1">Wajib</span>
-                        @endif
-                    </li>
-                @endforeach
-            </ul>
-        @else
-            <p class="text-muted fst-italic mb-4">Tidak ada field tambahan.</p>
-        @endif
-
-        {{-- ===================== --}}
-        {{-- Bagian 4: Alur Approval --}}
-       <h5 class="fw-bold mb-3">🔗 Alur Persetujuan (Approval)</h5>
-
-@if($alurApprovals->count() > 0)
-    <div class="list-group mb-4">
-        @foreach($alurApprovals as $step)
-            <div class="list-group-item py-3 d-flex justify-content-between align-items-center">
-
-                <div>
-                    <h6 class="fw-bold mb-1">{{ $step->masterJabatan->nama_jabatan }}</h6>
-                    <small class="text-muted">
-                        Scope: {{ $step->scope }}
-                    </small>
-                </div>
-
-                <span class="badge bg-warning text-dark px-3 py-2">
-                    Step #{{ $step->urutan }}
-                </span>
-            </div>
-        @endforeach
     </div>
-@else
-    <p class="text-muted fst-italic">Belum ada alur approval.</p>
-@endif
+</div>
 
-
+{{-- Modal Hapus --}}
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-body p-4 text-center">
+                <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+                <h5 class="mt-3 fw-bold">Hapus Jenis Surat?</h5>
+                <p class="text-muted">Data ini akan dihapus permanen dari sistem.</p>
+                <div class="d-flex justify-content-center gap-2 mt-4">
+                    <button type="button" class="btn btn-light px-4 rounded-pill" data-bs-dismiss="modal">Batal</button>
+                    <form action="{{ route('admin_akademik.jenis-surat.destroy', $jenisSurat->id) }}" method="POST">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="btn btn-danger px-4 rounded-pill">Ya, Hapus</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
