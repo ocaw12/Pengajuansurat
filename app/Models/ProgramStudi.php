@@ -43,4 +43,9 @@ class ProgramStudi extends Model
     {
         return $this->hasMany(AdminStaff::class);
     }
+
+    public function adminStaff()
+{
+    return $this->hasOne(AdminStaff::class, 'program_studi_id');
+}
 }

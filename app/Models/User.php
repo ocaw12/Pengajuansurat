@@ -90,5 +90,15 @@ class User extends Authenticatable
     {
         return $this->hasOne(AdminAkademik::class, 'user_id');
     }
+    public function getProfileData()
+{
+    return match($this->role->nama_role) {
+        'mahasiswa' => $this->mahasiswa,
+        'staff jurusan' => $this->adminStaff,
+        'pejabat' => $this->pejabat,
+        'admin akademik' => $this->adminAkademik,
+        default => null
+    };
+}
 }
 

@@ -1,64 +1,73 @@
 <section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            {{ __('Profile Information') }}
-        </h2>
+    <div class="bg-white shadow-sm rounded-4 p-4 border">
 
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __("Update your account's profile information and email address.") }}
-        </p>
-    </header>
-
-    <form id="send-verification" method="post" action="{{ route('verification.send') }}">
-        @csrf
-    </form>
-
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
-        @csrf
-        @method('patch')
-
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+        {{-- HEADER --}}
+        <div class="mb-4">
+            <h5 class="fw-bold mb-1">Profile Information</h5>
+            <p class="text-muted small mb-0">Kelola email dan nomor telepon kamu</p>
         </div>
 
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
+        <form method="post" action="{{ route('profile.update') }}">
+            @csrf
+            @method('patch')
 
-            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                <div>
-                    <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
-                        {{ __('Your email address is unverified.') }}
-
-                        <button form="send-verification" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                            {{ __('Click here to re-send the verification email.') }}
-                        </button>
-                    </p>
-
-                    @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-green-600 dark:text-green-400">
-                            {{ __('A new verification link has been sent to your email address.') }}
-                        </p>
-                    @endif
+            {{-- EMAIL --}}
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Email</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0">
+                        <i class="bi bi-envelope"></i>
+                    </span>
+                    <input 
+                        type="email" 
+                        name="email"
+                        class="form-control border-0 shadow-sm"
+                        value="{{ old('email', $user->email) }}"
+                        required
+                    >
                 </div>
-            @endif
-        </div>
+                @error('email')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
 
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            {{-- NO TELEPON --}}
+            <div class="mb-3">
+                <label class="form-label fw-semibold">No Telepon</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0">
+                        <i class="bi bi-telephone"></i>
+                    </span>
+                    <input 
+                        type="text" 
+                        name="no_telepon"
+                        class="form-control border-0 shadow-sm"
+                        value="{{ old('no_telepon', 
+                            $user->mahasiswa->no_telepon 
+                            ?? $user->adminStaff->no_telepon 
+                            ?? $user->pejabat->no_telepon 
+                            ?? $user->adminAkademik->no_telepon 
+                            ?? ''
+                        ) }}"
+                    >
+                </div>
+                @error('no_telepon')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
 
-            @if (session('status') === 'profile-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600 dark:text-gray-400"
-                >{{ __('Saved.') }}</p>
-            @endif
-        </div>
-    </form>
+            {{-- BUTTON --}}
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <button class="btn btn-warning fw-semibold px-4 shadow-sm">
+                    <i class="bi bi-check-circle me-1"></i> Simpan
+                </button>
+
+                @if (session('success'))
+                    <span class="text-success small">
+                        ✔ {{ session('success') }}
+                    </span>
+                @endif
+            </div>
+        </form>
+    </div>
 </section>

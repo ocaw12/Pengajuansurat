@@ -181,8 +181,17 @@
                     <div class="position-relative" style="z-index: 2;">
                         <h5 class="fw-bold mb-3"><i class="bi bi-info-circle me-2 text-warning"></i>Butuh Bantuan?</h5>
                         <p class="small opacity-75 mb-4">Jika kamu mengalami kendala atau butuh informasi lebih lanjut mengenai surat-surat akademik, silakan hubungi Staff TU.</p>
-                        <a href="#" class="btn btn-warning btn-sm fw-bold px-4 py-2 shadow-sm" style="border-radius: 8px;">Hubungi Admin</a>
-                    </div>
+@if($linkWa)
+    <a href="{{ $linkWa }}" target="_blank" 
+       class="btn btn-warning btn-sm fw-bold px-4 py-2 shadow-sm" 
+       style="border-radius: 8px;">
+        Hubungi Admin
+    </a>
+@else
+    <button class="btn btn-secondary btn-sm fw-bold px-4 py-2" disabled>
+        Admin belum tersedia
+    </button>
+@endif                    </div>
                     <div class="position-absolute" style="top: -20px; right: -20px; font-size: 150px; opacity: 0.1;">
                         <i class="bi bi-question-circle"></i>
                     </div>

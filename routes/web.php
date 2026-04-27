@@ -33,7 +33,8 @@ use App\Http\Controllers\AdminAkademik\AlurApprovalController;
 use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\VerifikasiController;
 
-
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -205,3 +206,9 @@ Route::get('/download/{fileName}', [DownloadController::class, 'download'])->nam
 });
 Route::get('verifikasi/{kode_verifikasi}', [VerifikasiController::class, 'show'])->name('verifikasi.show');
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+      Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+       Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
+});

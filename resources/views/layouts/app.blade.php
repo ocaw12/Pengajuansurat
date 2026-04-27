@@ -508,7 +508,7 @@
                         <li class="px-3 py-2 d-sm-none border-bottom mb-2">
                             <span class="fw-bold small">{{ Auth::user()->email }}</span>
                         </li>
-                        <li><a class="dropdown-item rounded-3 py-2 mx-2 w-auto" href="#"><i class="bi bi-person me-2"></i> Profil Saya</a></li>
+                        <li><a class="dropdown-item rounded-3 py-2 mx-2 w-auto" href="{{ route('profile') }}"><i class="bi bi-person me-2"></i> Profil Saya</a></li>
                         <li><hr class="dropdown-divider mx-2"></li>
                         <li>
                             <form method="POST" action="{{ route('logout') }}">

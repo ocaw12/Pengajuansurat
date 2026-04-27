@@ -2,59 +2,85 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Tampilkan halaman profil user
      */
-    public function edit(Request $request): View
+    public function index()
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
+        $user = Auth::user();
+
+        // Ambil data profil berdasarkan role
+        $profile = $this->getProfileData($user);
+
+        return view('profile.index', [
+            'user' => $user,
+            'profile' => $profile,
+            'role' => $user->role->nama_role
         ]);
     }
 
     /**
-     * Update the user's profile information.
+     * Function untuk ambil data sesuai role
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    private function getProfileData($user)
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return match($user->role->nama_role) {
+            'mahasiswa' => $user->mahasiswa,
+            'staff jurusan' => $user->adminStaff,
+            'pejabat' => $user->pejabat,
+            'admin akademik' => $user->adminAkademik,
+            default => null
+        };
     }
+    public function update(Request $request)
+{
+     $user = $request->user();
 
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+    $request->validate([
+        'email' => 'required|email|unique:users,email,' . $user->id,
+        'no_telepon' => 'nullable|string|max:15',
+    ]);
+
+    // update email
+    $user->update([
+        'email' => $request->email
+    ]);
+
+    // ambil profile sesuai role
+    $profile = $user->mahasiswa 
+        ?? $user->adminStaff 
+        ?? $user->pejabat 
+        ?? $user->adminAkademik;
+
+    if ($profile) {
+        $profile->update([
+            'no_telepon' => $request->no_telepon
         ]);
-
-        $user = $request->user();
-
-        Auth::logout();
-
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
     }
+
+    return back()->with('success', 'Profil berhasil diperbarui');
+}
+public function destroy(Request $request)
+{
+    $user = $request->user();
+
+    // optional: validasi password dulu
+    $request->validate([
+        'password' => ['required', 'current_password'],
+    ]);
+
+    Auth::logout();
+
+    $user->delete();
+
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/')->with('success', 'Akun berhasil dihapus');
+}
 }

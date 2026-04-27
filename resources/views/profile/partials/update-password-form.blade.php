@@ -1,48 +1,109 @@
 <section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            {{ __('Update Password') }}
-        </h2>
+    <div class="bg-white shadow-sm rounded-4 p-4 border">
 
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __('Ensure your account is using a long, random password to stay secure.') }}
-        </p>
-    </header>
-
-    <form method="post" action="{{ route('password.update') }}" class="mt-6 space-y-6">
-        @csrf
-        @method('put')
-
-        <div>
-            <x-input-label for="update_password_current_password" :value="__('Current Password')" />
-            <x-text-input id="update_password_current_password" name="current_password" type="password" class="mt-1 block w-full" autocomplete="current-password" />
-            <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
+        {{-- HEADER --}}
+        <div class="mb-4">
+            <h5 class="fw-bold mb-1">Update Password</h5>
+            <p class="text-muted small mb-0">Gunakan password minimal 8 karakter</p>
         </div>
 
-        <div>
-            <x-input-label for="update_password_password" :value="__('New Password')" />
-            <x-text-input id="update_password_password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
-        </div>
+        <form method="POST" action="{{ route('password.update') }}">
+            @csrf
+            @method('PUT')
 
-        <div>
-            <x-input-label for="update_password_password_confirmation" :value="__('Confirm Password')" />
-            <x-text-input id="update_password_password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
-        </div>
+            {{-- CURRENT PASSWORD --}}
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Current Password</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                    <input 
+                        type="password" 
+                        name="current_password"
+                        id="current_password"
+                        class="form-control border-0 shadow-sm"
+                        required
+                    >
+                </div>
+                @error('current_password')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
 
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            {{-- NEW PASSWORD --}}
+            <div class="mb-3">
+                <label class="form-label fw-semibold">New Password</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0">
+                        <i class="bi bi-key"></i>
+                    </span>
+                    <input 
+                        type="password" 
+                        name="password"
+                        id="password"
+                        class="form-control border-0 shadow-sm"
+                        required
+                        minlength="8"
+                    >
+                </div>
+                @error('password')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
 
-            @if (session('status') === 'password-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600 dark:text-gray-400"
-                >{{ __('Saved.') }}</p>
-            @endif
-        </div>
-    </form>
+            {{-- CONFIRM PASSWORD --}}
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Confirm Password</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0">
+                        <i class="bi bi-shield-lock"></i>
+                    </span>
+                    <input 
+                        type="password" 
+                        name="password_confirmation"
+                        id="password_confirmation"
+                        class="form-control border-0 shadow-sm"
+                        required
+                    >
+                </div>
+                @error('password_confirmation')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+
+            {{-- BUTTON --}}
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <button class="btn btn-warning fw-semibold px-4 shadow-sm">
+                    <i class="bi bi-check-circle me-1"></i> Simpan Password
+                </button>
+
+                @if (session('success'))
+                    <span class="text-success small">
+                        ✔ {{ session('success') }}
+                    </span>
+                @endif
+            </div>
+        </form>
+    </div>
 </section>
+
+{{-- VALIDASI JS --}}
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    let password = document.getElementById('password').value;
+    let confirm = document.getElementById('password_confirmation').value;
+
+    if (password.length < 8) {
+        e.preventDefault();
+        alert('Password minimal 8 karakter!');
+        return;
+    }
+
+    if (password !== confirm) {
+        e.preventDefault();
+        alert('Konfirmasi password tidak sama!');
+        return;
+    }
+});
+</script>

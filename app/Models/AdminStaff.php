@@ -41,4 +41,6 @@ class AdminStaff extends Model
     {
         return $this->hasMany(PengajuanSurat::class, 'admin_validator_id');
     }
+
+        
 }
