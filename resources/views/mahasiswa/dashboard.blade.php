@@ -402,7 +402,7 @@
         @endif
     </div>
 
-    {{-- Hubungi Admin --}}
+        {{-- Hubungi Admin (Mobile) --}}
     @if($linkWa)
     <div style="padding:0 1.25rem;margin-bottom:0.5rem;">
         <div class="m-contact-card">
@@ -414,18 +414,18 @@
                 <p>Hubungi admin prodi via WhatsApp</p>
             </div>
             <a href="{{ $linkWa }}" target="_blank"
-               style="background:#25d366;color:#fff;font-size:0.75rem;font-weight:700;padding:8px 14px;border-radius:10px;text-decoration:none;white-space:nowrap;flex-shrink:0;">
+               style="background:#25d366;color:#fff;font-size:0.75rem;font-weight:700;padding:8px 14px;border-radius:10px;text-decoration:none;white-space:nowrap;flex-shrink:0; position:relative; z-index:2;">
                 Chat
             </a>
         </div>
     </div>
     @endif
 
-    {{-- Status guide --}}
+    {{-- Status guide (Mobile) --}}
     <div class="m-section-header" style="padding-bottom:0.25rem;">
         <span class="m-section-title" style="font-size:0.8rem;">Panduan Status</span>
     </div>
-    <div class="m-guide-row">
+    <div class="m-guide-row" style="margin: 0 1.25rem;">
         <div class="m-guide-pill">
             <div class="m-guide-dot" style="background:#f59e0b;"></div>
             <span style="color:#92400e;">Menunggu</span>
