@@ -12,6 +12,9 @@ use App\Http\Requests\AdminAkademik\UpdateMahasiswaRequest; // Gunakan request k
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MahasiswaController extends Controller
 {
@@ -143,4 +146,53 @@ public function import(Request $request)
         $mahasiswa = Mahasiswa::with(['programStudi', 'user'])->findOrFail($id);
         return view('admin_akademik.mahasiswa.show', compact('mahasiswa'));
     }
+    public function downloadTemplate()
+{
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    // Header kolom
+    $headers = [
+        'nim',
+        'email',
+        'nama_lengkap',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'alamat',
+        'jenis_kelamin',
+        'no_telepon',
+        'program_studi_id',
+        'angkatan'
+    ];
+
+    // Isi header
+    $column = 'A';
+    foreach ($headers as $header) {
+        $sheet->setCellValue($column . '1', $header);
+        $column++;
+    }
+
+    // Contoh data
+    $sheet->setCellValue('A2', '24010410012');
+    $sheet->setCellValue('B2', 'budisantoso@up45.ac.id');
+    $sheet->setCellValue('C2', 'Budi Santoso');
+    $sheet->setCellValue('D2', 'Sleman');
+    $sheet->setCellValue('E2', '2004-01-01');
+    $sheet->setCellValue('F2', 'Sleman, Yogyakarta');
+    $sheet->setCellValue('G2', 'Laki_laki');
+    $sheet->setCellValue('H2', '081234567890');
+    $sheet->setCellValue('I2', '4');
+    $sheet->setCellValue('J2', '2024');
+
+    // Auto size kolom
+    foreach (range('A', 'J') as $col) {
+        $sheet->getColumnDimension($col)->setAutoSize(true);
+    }
+
+    $writer = new Xlsx($spreadsheet);
+
+    return response()->streamDownload(function () use ($writer) {
+        $writer->save('php://output');
+    }, 'template_mahasiswa.xlsx');
+}
 }

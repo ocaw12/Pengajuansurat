@@ -21,7 +21,7 @@ use App\Http\Controllers\Pejabat\ApprovalController;
 
 // --- CONTROLLER ADMIN AKADEMIK ---
 use App\Http\Controllers\AdminAkademik\DashboardController as AdminAkademikDashboard;
-use App\Http\Controllers\AdminAkademik\UserController;
+// use App\Http\Controllers\AdminAkademik\UserController;
 use App\Http\Controllers\AdminAkademik\AdminFakultasController;
 use App\Http\Controllers\AdminAkademik\ProdiController;
 use App\Http\Controllers\AdminAkademik\MasterJabatanController;
@@ -29,7 +29,7 @@ use App\Http\Controllers\AdminAkademik\MahasiswaController;
 use App\Http\Controllers\AdminAkademik\PejabatController;
 use App\Http\Controllers\AdminAkademik\AdminStaffController;
 use App\Http\Controllers\AdminAkademik\JenisSuratController;
-use App\Http\Controllers\AdminAkademik\AlurApprovalController;
+use App\Http\Controllers\AdminAkademik\TahunAjaranController;
 use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\VerifikasiController;
 
@@ -172,10 +172,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [AdminAkademikDashboard::class, 'index'])->name('dashboard');
 
         // CRUD untuk semua data master
-        Route::resource('users', UserController::class); // Manajemen Akun User
+        // Route::resource('users', UserController::class); // Manajemen Akun User
         Route::resource('fakultas', AdminFakultasController::class)
              ->parameters(['fakultas' => 'fakultas']); // Menambahkan parameter fakultas
+Route::resource('tahun-ajaran', TahunAjaranController::class);
 
+        Route::patch(
+            'tahun-ajaran/{id}/aktifkan',
+            [TahunAjaranController::class, 'aktifkan']
+        )->name('tahun-ajaran.aktifkan');
         // **PERBAIKI BAGIAN INI**
         // Rute Prodi (dengan namespace yang benar)
         Route::resource('prodi', ProdiController::class); // Pastikan route prodi sudah benar
@@ -185,12 +190,16 @@ Route::resource('master-jabatan', MasterJabatanController::class);
 Route::resource('admin-staff', AdminStaffController::class); 
 Route::get('admin-staff/{id}/edit', [AdminStaffController::class, 'edit'])->name('admin_akademik.admin-staff.edit');
 Route::put('admin-staff/{id}', [AdminStaffController::class, 'update'])->name('admin_akademik.admin-staff.update');
+ Route::get('mahasiswa/template', 
+    [MahasiswaController::class, 'downloadTemplate']
+)->name('mahasiswa.template');
 Route::resource('mahasiswa', MahasiswaController::class); // CRUD untuk Mahasiswa
 Route::put('mahasiswa/{id}', [MahasiswaController::class, 'update'])->name('admin_akademik.mahasiswa.update');
 
 // ROUTE IMPORT MAHASISWA
 Route::post('mahasiswa/import', [MahasiswaController::class, 'import'])
     ->name('mahasiswa.import');
+   
         // CRUD untuk Jenis Surat (Katalog)
         Route::resource('jenis-surat', JenisSuratController::class);
 
@@ -198,7 +207,7 @@ Route::post('mahasiswa/import', [MahasiswaController::class, 'import'])
         // Ini akan membuat rute seperti:
         // /admin-akademik/jenis-surat/{jenis_surat}/alur/create
         // /admin-akademik/alur/{alur}/edit
-        Route::resource('jenis-surat.alur', AlurApprovalController::class)->shallow();
+        // Route::resource('jenis-surat.alur', AlurApprovalController::class)->shallow();
     });
 
 Route::get('/download/{fileName}', [DownloadController::class, 'download'])->name('download.surat');

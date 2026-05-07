@@ -524,6 +524,13 @@
                                 <i class="bi bi-briefcase"></i><span>Master Jabatan</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+    <a href="{{ route('admin_akademik.tahun-ajaran.index') }}" 
+       class="nav-link {{ request()->routeIs('admin_akademik.tahun-ajaran.*') ? 'active' : '' }}">
+        <i class="bi bi-calendar-range"></i>
+        <span>Tahun Ajaran</span>
+    </a>
+</li>
                     @endif
                 @endauth
             </ul>

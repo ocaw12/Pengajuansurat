@@ -102,6 +102,7 @@ class GeneratePdfJob implements ShouldQueue
                 '[angkatan]'       => $mahasiswa->angkatan ?? '-',
                 '[tanggal_sekarang]' => now()->isoFormat('D MMMM YYYY'),
                 '[nomor_surat]'    => $nomorSuratLengkap, // Tambahkan nomor surat ke kamus
+                
             ];
             if ($pengajuan->data_pendukung) {
                 foreach ($pengajuan->data_pendukung as $key => $value) {

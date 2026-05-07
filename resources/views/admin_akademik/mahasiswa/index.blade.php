@@ -64,6 +64,10 @@
             </div>
             
             <div class="d-flex align-items-center gap-2">
+                <a href="{{ route('admin_akademik.mahasiswa.template') }}"
+   class="btn btn-outline-primary btn-sm rounded-pill px-3">
+    <i class="bi bi-download"></i> Template Excel
+</a>
                 <form action="{{ route('admin_akademik.mahasiswa.import') }}" method="POST" enctype="multipart/form-data" class="import-container d-none d-md-flex">
                     @csrf
                     <input type="file" name="file" class="form-control form-control-sm" style="width: 180px;" accept=".xlsx,.csv" required>
