@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 
 // --- CONTROLLER UMUM ---
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\NewPasswordController;
 
 // --- CONTROLLER MAHASISWA ---
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboard;
@@ -48,7 +50,22 @@ Route::get('/', function () {
 
 // Rute bawaan Breeze/Jetstream (login, register, forgot password, dll)
 require __DIR__.'/auth.php';
+Route::middleware('guest')->group(function () {
 
+    Route::get('/forgot-password', function () {
+        return view('auth.forgot-password');
+    })->name('password.request');
+
+    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
+        ->name('password.email');
+
+    Route::get('/reset-password/{token}', function (string $token) {
+        return view('auth.reset-password', ['token' => $token]);
+    })->name('password.reset');
+
+    Route::post('/reset-password', [NewPasswordController::class, 'store'])
+        ->name('password.store');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -176,6 +193,15 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('fakultas', AdminFakultasController::class)
              ->parameters(['fakultas' => 'fakultas']); // Menambahkan parameter fakultas
 Route::resource('tahun-ajaran', TahunAjaranController::class);
+
+Route::patch('semester/{id}/aktifkan', [TahunAjaranController::class, 'aktifkanSemester'])
+    ->name('semester.aktifkan');
+Route::put('semester/{id}', [TahunAjaranController::class, 'updateSemester'])
+    ->name('semester.update');
+
+    Route::resource('tahun-ajaran', TahunAjaranController::class);
+Route::patch('tahun-ajaran/{id}/aktifkan', [TahunAjaranController::class, 'aktifkan'])
+    ->name('tahun-ajaran.aktifkan');
 
         Route::patch(
             'tahun-ajaran/{id}/aktifkan',
