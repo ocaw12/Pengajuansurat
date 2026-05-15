@@ -5,7 +5,6 @@
 
 @push('styles')
 <style>
-    /* Styling Card & Table */
     .card { border: none; border-radius: 15px; overflow: hidden; }
     .card-header { background: #fff; border-bottom: 1px solid #f0f0f0; padding: 1.25rem 1.5rem; }
     
@@ -21,7 +20,6 @@
     .table tbody tr { transition: all 0.2s; }
     .table tbody tr:hover { background-color: #f1f5f9; }
 
-    /* Avatar & Info Styling */
     .avatar-circle {
         width: 40px; height: 40px;
         background-color: #e2e8f0;
@@ -30,7 +28,6 @@
         border-radius: 50%; font-weight: bold; font-size: 0.9rem;
     }
 
-    /* Action Buttons */
     .btn-action {
         width: 32px; height: 32px;
         display: inline-flex; align-items: center; justify-content: center;
@@ -41,7 +38,6 @@
     .btn-delete { background-color: #fee2e2; color: #b91c1c; }
     .btn-delete:hover { background-color: #fecaca; }
 
-    /* Custom Badge */
     .badge-status { padding: 0.5em 1em; font-weight: 600; font-size: 0.75rem; }
 </style>
 @endpush
@@ -137,9 +133,9 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center py-5">
-                                <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" width="80" class="opacity-25 mb-3">
-                                <p class="text-muted">Belum ada data pejabat yang terdaftar.</p>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>
+                                Belum ada data pejabat yang terdaftar.
                             </td>
                         </tr>
                     @endforelse
@@ -149,7 +145,7 @@
     </div>
 </div>
 
-{{-- MODAL HAPUS (Dibuat lebih modern) --}}
+{{-- MODAL HAPUS --}}
 @foreach ($pejabat as $item)
 <div class="modal fade" id="deleteModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
@@ -158,8 +154,8 @@
                 <div class="text-danger mb-3">
                     <i class="bi bi-exclamation-octagon-fill" style="font-size: 3rem;"></i>
                 </div>
-                <h5 class="fw-bold">Hapus Data?</h5>
-                <p class="text-muted small">Anda akan menghapus data <strong>{{ $item->nama_lengkap }}</strong>. Tindakan ini tidak dapat dibatalkan.</p>
+                <h5 class="fw-bold">Hapus Pejabat?</h5>
+                <p class="text-muted small">Menghapus <strong>{{ $item->nama_lengkap }}</strong> akan menghilangkan akses akunnya.</p>
                 <div class="d-flex gap-2 justify-content-center mt-4">
                     <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
                     <form action="{{ route('admin_akademik.pejabat.destroy', $item->id) }}" method="POST">
@@ -173,4 +169,5 @@
     </div>
 </div>
 @endforeach
+
 @endsection

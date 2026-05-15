@@ -13,7 +13,6 @@
     .edit-btn   { position: absolute; top: 0.5rem; right: 2.8rem; cursor: pointer; }
     .sort-handle { cursor: grab; color: #6c757d; }
 
-    /* ── Template textarea highlight ── */
     #isi_template {
         font-family: 'Courier New', Courier, monospace;
         font-size: 0.88rem;
@@ -48,9 +47,6 @@
     @csrf
     <div class="row">
 
-        {{-- ════════════════════════════════════════
-             KOLOM KIRI: Detail, Template, Schema
-        ════════════════════════════════════════ --}}
         <div class="col-lg-8 mb-4">
 
             {{-- Detail Surat --}}
@@ -111,7 +107,6 @@
                 </div>
             </div>
 
-            {{-- ── KEYWORD REFERENCE ── --}}
             @include('admin_akademik.jenis_surat.partials.keyword_reference', [
                 'tahunAjaranAktif' => $tahunAjaranAktif,
                 'semesterAktif'    => $semesterAktif,
@@ -121,8 +116,7 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex align-items-center justify-content-between">
                     <h5 class="mb-0 card-title"><i class="bi bi-textarea-t me-2"></i>Isi Naskah Surat (Template)</h5>
-                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle"
-                          style="font-size:0.68rem;">
+                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size:0.68rem;">
                         <i class="bi bi-cursor-text me-1"></i>Klik keyword lalu sisipkan di posisi kursor
                     </span>
                 </div>
@@ -135,12 +129,12 @@
                     <textarea class="form-control @error('isi_template') is-invalid @enderror"
                               id="isi_template" name="isi_template"
                               rows="18" required
-                              placeholder="Tulis naskah surat di sini...&#10;&#10;Contoh:&#10;Nomor: [nomor_surat]&#10;&#10;Yang bertanda tangan di bawah ini menerangkan bahwa:&#10;&#10;Nama    : [nama_mahasiswa]&#10;NIM     : [nim]&#10;Prodi   : [prodi]&#10;Semester: [semester_angka] ([semester_lengkap])&#10;&#10;adalah benar mahasiswa aktif pada [semester_lengkap] Universitas Proklamasi 45.">{{ old('isi_template') }}</textarea>
+                              placeholder="Tulis naskah surat di sini...">{{ old('isi_template') }}</textarea>
                     @error('isi_template') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
             </div>
 
-            {{-- Field Tambahan (Form Schema) --}}
+            {{-- Field Tambahan --}}
             <div class="card shadow-sm mb-4">
                 <div class="card-header">
                     <h5 class="mb-0 card-title"><i class="bi bi-ui-checks-grid me-2"></i>Field Tambahan untuk Mahasiswa</h5>
@@ -162,9 +156,7 @@
             </div>
         </div>
 
-        {{-- ════════════════════════════════════════
-             KOLOM KANAN: Alur Approval
-        ════════════════════════════════════════ --}}
+        {{-- Alur Approval --}}
         <div class="col-lg-4 mb-4">
             <div class="card shadow-sm sticky-top" style="top: 80px;">
                 <div class="card-header">
@@ -173,8 +165,7 @@
                 <div class="card-body">
                     <div class="alert alert-info small p-2 mb-3">
                         <i class="bi bi-info-circle-fill me-1"></i>
-                        Tentukan pejabat yang menyetujui <strong>secara berurutan</strong>.
-                        Minimal 1 langkah.
+                        Tentukan pejabat yang menyetujui <strong>secara berurutan</strong>. Minimal 1 langkah.
                     </div>
                     @error('approvals')
                         <div class="alert alert-danger small py-1 px-2 mb-2">{{ $message }}</div>
@@ -211,16 +202,13 @@
                 <input type="hidden" id="editingSchemaIndex">
                 <div class="mb-3">
                     <label class="form-label">Label Field <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="schema_label"
-                           placeholder="Contoh: Judul Penelitian" required>
+                    <input type="text" class="form-control" id="schema_label" placeholder="Contoh: Judul Penelitian" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Nama Kunci (Placeholder) <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="schema_name"
                            placeholder="judul_penelitian" pattern="^[a-zA-Z0-9_]+$" required>
-                    <div class="form-text">
-                        Hanya huruf, angka, underscore. Gunakan sebagai <code>[nama_kunci]</code> di template.
-                    </div>
+                    <div class="form-text">Hanya huruf, angka, underscore. Gunakan sebagai <code>[nama_kunci]</code> di template.</div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Tipe Field <span class="text-danger">*</span></label>
@@ -277,6 +265,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endsection
 
 @push('scripts')
@@ -313,10 +302,7 @@ $(document).ready(function () {
                     </div>`);
             });
         }
-        // Sync keyword panel
-        if (typeof updateDynamicKeywords === 'function') {
-            updateDynamicKeywords(formSchema);
-        }
+        if (typeof updateDynamicKeywords === 'function') updateDynamicKeywords(formSchema);
     }
 
     // ── RENDER APPROVAL ──────────────────────────────────────────
@@ -359,8 +345,8 @@ $(document).ready(function () {
         const name  = $('#schema_name').val().trim();
         const type  = $('#schema_type').val();
         const idx   = $('#editingSchemaIndex').val();
-        if (!label || !name) { alert('Label dan Nama Kunci wajib diisi.'); return; }
-        if (!/^[a-zA-Z0-9_]+$/.test(name)) { alert('Nama Kunci hanya huruf, angka, underscore.'); return; }
+        if (!label || !name) { Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Label dan Nama Kunci wajib diisi.', confirmButtonColor: '#f59e0b' }); return; }
+        if (!/^[a-zA-Z0-9_]+$/.test(name)) { Swal.fire({ icon: 'warning', title: 'Format Salah', text: 'Nama Kunci hanya boleh huruf, angka, dan underscore.', confirmButtonColor: '#f59e0b' }); return; }
         const obj = { label, name, type };
         idx !== '' ? formSchema[parseInt(idx)] = obj : formSchema.push(obj);
         renderSchemaList();
@@ -380,11 +366,30 @@ $(document).ready(function () {
     });
 
     $('#schema-container').on('click', '.remove-schema-btn', function () {
-        const idx = $(this).data('index');
-        if (confirm(`Hapus field "${formSchema[idx]?.label}"?`)) {
-            formSchema.splice(idx, 1);
-            renderSchemaList();
-        }
+        const idx   = $(this).data('index');
+        const label = formSchema[idx]?.label || 'field ini';
+        Swal.fire({
+            title: 'Hapus Field?',
+            html: `Field <strong>${label}</strong> akan dihapus dari daftar.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#e11d48',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Ya, Hapus',
+            cancelButtonText: 'Batal',
+            reverseButtons: true,
+            customClass: {
+                popup: 'rounded-4',
+                confirmButton: 'btn btn-danger px-4 rounded-pill fw-bold ms-2',
+                cancelButton: 'btn btn-light px-4 rounded-pill fw-bold'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                formSchema.splice(idx, 1);
+                renderSchemaList();
+            }
+        });
     });
 
     // ── APPROVAL EVENTS ──────────────────────────────────────────
@@ -400,7 +405,7 @@ $(document).ready(function () {
         const jabId = $('#approval_jabatan').val();
         const scope = $('#approval_scope').val();
         const idx   = $('#editingApprovalIndex').val();
-        if (!jabId) { alert('Pilih jabatan terlebih dahulu.'); return; }
+        if (!jabId) { Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Pilih jabatan terlebih dahulu.', confirmButtonColor: '#f59e0b' }); return; }
         const obj = { master_jabatan_id: jabId, scope };
         idx !== '' ? approvals[parseInt(idx)] = obj : approvals.push(obj);
         renderApprovalList();
@@ -420,11 +425,29 @@ $(document).ready(function () {
 
     $('#approval-container').on('click', '.remove-approval-btn', function () {
         const idx  = $(this).data('index');
-        const jabN = masterJabatans[approvals[idx]?.master_jabatan_id] || 'ini';
-        if (confirm(`Hapus langkah #${idx+1} (${jabN})?`)) {
-            approvals.splice(idx, 1);
-            renderApprovalList();
-        }
+        const jabN = masterJabatans[approvals[idx]?.master_jabatan_id] || 'langkah ini';
+        Swal.fire({
+            title: 'Hapus Langkah Approval?',
+            html: `Langkah <strong>#${idx+1} – ${jabN}</strong> akan dihapus dari alur persetujuan.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#e11d48',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Ya, Hapus',
+            cancelButtonText: 'Batal',
+            reverseButtons: true,
+            customClass: {
+                popup: 'rounded-4',
+                confirmButton: 'btn btn-danger px-4 rounded-pill fw-bold ms-2',
+                cancelButton: 'btn btn-light px-4 rounded-pill fw-bold'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                approvals.splice(idx, 1);
+                renderApprovalList();
+            }
+        });
     });
 
     // ── UTILITY ──────────────────────────────────────────────────
@@ -435,7 +458,6 @@ $(document).ready(function () {
             .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
     }
 
-    // Init
     renderSchemaList();
     renderApprovalList();
 });

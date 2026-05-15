@@ -241,6 +241,19 @@ Route::get('/download/{fileName}', [DownloadController::class, 'download'])->nam
 });
 Route::get('verifikasi/{kode_verifikasi}', [VerifikasiController::class, 'show'])->name('verifikasi.show');
 
+Route::get('/preview/{fileName}', [DownloadController::class, 'preview'])->name('preview.surat');
+
+
+// TARUH DI SINI 👇
+Route::get('/preview-dokumen/{filename}', function ($filename) {
+
+    $path = storage_path('app/public/dokumen_pengajuan/' . $filename);
+
+    abort_unless(file_exists($path), 404);
+
+    return response()->file($path);
+
+})->name('preview.dokumen');
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
       Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -5,7 +5,6 @@
 
 @push('styles')
 <style>
-    /* Styling Tabel Modern */
     .table thead th {
         background-color: #f8f9fa;
         text-transform: uppercase;
@@ -16,15 +15,9 @@
         border-top: none;
     }
     
-    .table tbody tr {
-        transition: all 0.2s;
-    }
-    
-    .table tbody tr:hover {
-        background-color: rgba(255, 193, 7, 0.03) !important;
-    }
+    .table tbody tr { transition: all 0.2s; }
+    .table tbody tr:hover { background-color: rgba(255, 193, 7, 0.03) !important; }
 
-    /* Custom Badges */
     .badge-code {
         background-color: #e9ecef;
         color: #495057;
@@ -32,7 +25,6 @@
         padding: 0.5em 0.8em;
     }
 
-    /* Action Buttons */
     .btn-action {
         width: 32px;
         height: 32px;
@@ -44,14 +36,9 @@
         transition: transform 0.2s;
     }
     
-    .btn-action:hover {
-        transform: scale(1.1);
-    }
+    .btn-action:hover { transform: scale(1.1); }
 
-    .card {
-        border-radius: 12px;
-        overflow: hidden;
-    }
+    .card { border-radius: 12px; overflow: hidden; }
 </style>
 @endpush
 
@@ -105,19 +92,14 @@
                         </td>
                         <td class="text-center pe-4">
                             <div class="d-flex justify-content-center gap-2">
-                                {{-- Tombol Detail --}}
                                 <a href="{{ route('admin_akademik.jenis-surat.show', $jenis->id) }}" 
                                    class="btn btn-action btn-light border" title="Lihat Detail">
                                     <i class="bi bi-eye text-info"></i>
                                 </a>
-
-                                {{-- Tombol Edit --}}
                                 <a href="{{ route('admin_akademik.jenis-surat.edit', $jenis->id) }}" 
                                    class="btn btn-action btn-light border" title="Edit">
                                     <i class="bi bi-pencil-square text-warning"></i>
                                 </a>
-
-                                {{-- Tombol Delete --}}
                                 <button type="button" class="btn btn-action btn-light border" 
                                         data-bs-toggle="modal" data-bs-target="#deleteModal{{ $jenis->id }}" title="Hapus">
                                     <i class="bi bi-trash text-danger"></i>
@@ -128,7 +110,7 @@
                     @empty
                     <tr>
                         <td colspan="6" class="py-5 text-center">
-                            <img src="https://illustrations.popsy.co/amber/files-sent.svg" alt="Empty" style="height: 150px;" class="mb-3">
+                            <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25 text-muted"></i>
                             <h6 class="text-muted">Belum ada jenis surat yang ditambahkan.</h6>
                             <a href="{{ route('admin_akademik.jenis-surat.create') }}" class="btn btn-link text-decoration-none">Buat sekarang &rarr;</a>
                         </td>
@@ -140,21 +122,23 @@
     </div>
 </div>
 
-{{-- Modal Konfirmasi Hapus yang Lebih Rapi --}}
+{{-- MODAL HAPUS --}}
 @foreach($jenisSurats as $jenis)
 <div class="modal fade" id="deleteModal{{ $jenis->id }}" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content border-0 shadow">
-            <div class="modal-body p-4 text-center">
-                <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
-                <h5 class="mt-3 fw-bold">Hapus Jenis Surat?</h5>
-                <p class="text-muted">Anda akan menghapus <strong>{{ $jenis->nama_surat }}</strong>. Tindakan ini tidak dapat dibatalkan.</p>
-                <div class="d-flex justify-content-center gap-2 mt-4">
-                    <button type="button" class="btn btn-light px-4 rounded-pill" data-bs-dismiss="modal">Batal</button>
+            <div class="modal-body text-center p-4">
+                <div class="text-danger mb-3">
+                    <i class="bi bi-exclamation-octagon-fill" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="fw-bold">Hapus Jenis Surat?</h5>
+                <p class="text-muted small">Surat <strong>{{ $jenis->nama_surat }}</strong> akan dihapus permanen dari sistem.</p>
+                <div class="d-flex gap-2 justify-content-center mt-4">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
                     <form action="{{ route('admin_akademik.jenis-surat.destroy', $jenis->id) }}" method="POST">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger px-4 rounded-pill">Ya, Hapus</button>
+                        <button class="btn btn-danger rounded-pill px-4">Ya, Hapus</button>
                     </form>
                 </div>
             </div>

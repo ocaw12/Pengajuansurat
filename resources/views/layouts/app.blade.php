@@ -402,6 +402,7 @@
     </style>
     @stack('styles')
 </head>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <body>
 
     {{-- ─────── DESKTOP SIDEBAR ─────── --}}
@@ -590,10 +591,12 @@
                         <li><a class="dropdown-item rounded-3 py-2 mx-2 w-auto" href="{{ route('profile') }}"><i class="bi bi-person me-2"></i> Profil Saya</a></li>
                         <li><hr class="dropdown-divider mx-2"></li>
                         <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="dropdown-item rounded-3 py-2 mx-2 w-auto text-danger"><i class="bi bi-box-arrow-right me-2"></i> Logout</button>
-                            </form>
+                           <form method="POST" action="{{ route('logout') }}" id="logoutFormDropdown">
+    @csrf
+    <button type="submit" class="dropdown-item rounded-3 py-2 mx-2 w-auto text-danger" id="logoutBtnDropdown">
+        <i class="bi bi-box-arrow-right me-2"></i> Logout
+    </button>
+</form>
                         </li>
                     </ul>
                 </div>
@@ -661,13 +664,13 @@
                 <span>Profil</span>
             </a>
 
-            <form method="POST" action="{{ route('logout') }}" class="bottom-nav-item p-0 border-0 bg-transparent" style="cursor:pointer;" onsubmit="return confirm('Keluar dari SISURAT?')">
-                @csrf
-                <button type="submit" class="bottom-nav-item border-0 bg-transparent w-100 h-100" style="flex:1;">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <span>Keluar</span>
-                </button>
-            </form>
+           <form method="POST" action="{{ route('logout') }}" id="logoutFormMobile" class="bottom-nav-item p-0 border-0 bg-transparent" style="cursor:pointer;">
+    @csrf
+    <button type="submit" class="bottom-nav-item border-0 bg-transparent w-100 h-100" id="logoutBtnMobile" style="flex:1;">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Keluar</span>
+    </button>
+</form>
         </nav>
         @endif
     @endauth
@@ -689,6 +692,45 @@
             });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    function confirmLogout(formId) {
+        const form = document.getElementById(formId);
+
+        if (!form) return;
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Yakin Ingin Keluar?',
+                text: "Kamu akan keluar dari sistem",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d97706',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Logout',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    }
+
+    // ====== semua logout di layout kamu ======
+    confirmLogout('logoutFormDropdown'); // navbar dropdown
+    confirmLogout('logoutForm');         // sidebar
+    confirmLogout('logoutFormMobile');   // bottom nav (mobile)
+
+});
+</script>
     @stack('scripts')
 </body>
 </html>

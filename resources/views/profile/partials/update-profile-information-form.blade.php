@@ -31,30 +31,34 @@
                 @enderror
             </div>
 
-            {{-- NO TELEPON --}}
-            <div class="mb-3">
-                <label class="form-label fw-semibold">No Telepon</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-0">
-                        <i class="bi bi-telephone"></i>
-                    </span>
-                    <input 
-                        type="text" 
-                        name="no_telepon"
-                        class="form-control border-0 shadow-sm"
-                        value="{{ old('no_telepon', 
-                            $user->mahasiswa->no_telepon 
-                            ?? $user->adminStaff->no_telepon 
-                            ?? $user->pejabat->no_telepon 
-                            ?? $user->adminAkademik->no_telepon 
-                            ?? ''
-                        ) }}"
-                    >
-                </div>
-                @error('no_telepon')
-                    <small class="text-danger">{{ $message }}</small>
-                @enderror
-            </div>
+          @if($role !== 'admin akademik')
+
+{{-- NO TELEPON --}}
+<div class="mb-3">
+    <label class="form-label fw-semibold">No Telepon</label>
+    <div class="input-group">
+        <span class="input-group-text bg-light border-0">
+            <i class="bi bi-telephone"></i>
+        </span>
+        <input 
+            type="text" 
+            name="no_telepon"
+            class="form-control border-0 shadow-sm"
+            value="{{ old('no_telepon', 
+                $user->mahasiswa->no_telepon 
+                ?? $user->adminStaff->no_telepon 
+                ?? $user->pejabat->no_telepon 
+                ?? $user->adminAkademik->no_telepon 
+                ?? ''
+            ) }}"
+        >
+    </div>
+    @error('no_telepon')
+        <small class="text-danger">{{ $message }}</small>
+    @enderror
+</div>
+
+@endif
 
             {{-- BUTTON --}}
             <div class="d-flex justify-content-between align-items-center mt-4">

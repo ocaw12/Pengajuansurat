@@ -61,15 +61,19 @@
 </a>
 
 
-        <div class="flex items-center gap-3">
-          @if (Route::has('login'))
-            @auth
-              <a href="{{ url('/dashboard') }}" class="hidden sm:inline-flex items-center rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-white text-sm font-medium shadow-soft hover:from-brand-700 hover:to-brand-500/90 focus:outline-none focus:ring-2 focus:ring-brand-200">Dashboard</a>
-            @else
-              <a href="{{ route('login') }}" class="inline-flex items-center rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-white text-sm font-medium shadow-soft hover:from-brand-700 hover:to-brand-500/90 focus:outline-none focus:ring-2 focus:ring-brand-200">Login</a>
-            @endauth
-          @endif
-        </div>
+       <div class="flex items-center gap-3">
+    @if(Auth::check())
+        <a href="{{ url('/dashboard') }}"
+           class="inline-flex items-center rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-white text-sm font-medium shadow-soft hover:from-brand-700 hover:to-brand-500/90 focus:outline-none focus:ring-2 focus:ring-brand-200">
+            Lanjut ke Dashboard
+        </a>
+    @else
+        <a href="{{ route('login') }}"
+           class="inline-flex items-center rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-white text-sm font-medium shadow-soft hover:from-brand-700 hover:to-brand-500/90 focus:outline-none focus:ring-2 focus:ring-brand-200">
+            Login
+        </a>
+    @endif
+</div>
       </div>
     </nav>
   </header>
@@ -86,11 +90,11 @@
           <p class="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">Layanan digital untuk memudahkan mahasiswa dan akademik dalam proses pengajuan, verifikasi, dan penerbitan surat menyurat di lingkungan kampus.</p>
 
           <div class="mt-6 flex flex-wrap gap-3">
-            @guest
-            <a href="{{ route('login') }}" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-600 to-brand-400 px-5 py-3 text-white font-semibold shadow-soft hover:from-brand-700 hover:to-brand-400/90 focus:outline-none focus:ring-2 focus:ring-brand-200">
+           @if(!Auth::check())
+<a href="{{ route('login') }}" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-600 to-brand-400 px-5 py-3 text-white font-semibold shadow-soft hover:from-brand-700 hover:to-brand-400/90 focus:outline-none focus:ring-2 focus:ring-brand-200">
               Mulai Pengajuan
             </a>
-            @endguest
+@endif
             <a href="#tata-cara" class="inline-flex items-center gap-2 rounded-xl border border-brand-200 bg-white px-5 py-3 font-semibold text-brand-700 hover:bg-brand-50">
               Lihat Tata Cara
             </a>
@@ -333,9 +337,9 @@
             <p class="mt-2 text-brand-100/90">Masuk ke SIPAS dan mulai pengajuan Anda hari ini.</p>
           </div>
           <div class="flex flex-wrap items-center gap-3 sm:justify-end">
-            @guest
+@if(!Auth::check())
             <a href="{{ route('login') }}" class="inline-flex items-center rounded-xl bg-white px-5 py-3 font-semibold text-brand-700 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-white/50">Login</a>
-            @endguest
+@endif
             <a href="#tata-cara" class="inline-flex items-center rounded-xl bg-white/15 px-5 py-3 font-semibold text-white hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/40">Lihat Tata Cara</a>
           </div>
         </div>

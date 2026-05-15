@@ -177,9 +177,7 @@
 @section('content')
 <div class="ta-page">
 
-    {{-- ════════════════════════════
-         HEADER
-    ════════════════════════════ --}}
+    {{-- HEADER --}}
     <div class="ta-header shadow-sm">
         <div>
             <h4 class="fw-bold text-dark mb-0">
@@ -189,11 +187,7 @@
         </div>
     </div>
 
-    
-
-    {{-- ════════════════════════════
-         FORM TAMBAH TAHUN AJARAN
-    ════════════════════════════ --}}
+    {{-- FORM TAMBAH TAHUN AJARAN --}}
     <div class="ta-form-panel shadow-sm">
         <h6 class="fw-bold text-dark mb-3">
             <i class="bi bi-plus-circle-fill text-warning me-2"></i>Tambah Tahun Ajaran Baru
@@ -223,13 +217,10 @@
         </form>
     </div>
 
-    {{-- ════════════════════════════
-         DAFTAR TAHUN AJARAN
-    ════════════════════════════ --}}
+    {{-- DAFTAR TAHUN AJARAN --}}
     @forelse($tahunAjarans as $ta)
     <div class="ta-card {{ $ta->is_aktif ? 'is-active' : '' }}">
 
-        {{-- Header baris --}}
         <div class="ta-card-header">
             <i class="bi bi-calendar3 text-warning fs-5"></i>
             <span class="ta-year-badge">{{ $ta->tahun }}</span>
@@ -240,23 +231,26 @@
                 <span class="ta-status-chip chip-inactive">Tidak Aktif</span>
             @endif
 
-            {{-- Semester aktif info --}}
-            @php
-                $semAktif = $ta->semesters->firstWhere('is_aktif', true);
-            @endphp
+            @php $semAktif = $ta->semesters->firstWhere('is_aktif', true); @endphp
             @if($semAktif)
                 <span class="ta-status-chip" style="background:#fffbeb;color:#d97706;">
                     <i class="bi bi-play-circle-fill me-1"></i>{{ $semAktif->semester }} Berjalan
                 </span>
             @endif
 
-            {{-- Aksi --}}
             <div class="ta-actions">
+                {{-- Tombol Aktifkan Tahun Ajaran --}}
                 @if(!$ta->is_aktif)
-                <form action="{{ route('admin_akademik.tahun-ajaran.aktifkan', $ta->id) }}" method="POST" class="d-inline">
+                <form action="{{ route('admin_akademik.tahun-ajaran.aktifkan', $ta->id) }}"
+                      method="POST"
+                      class="d-inline"
+                      id="aktif-form-{{ $ta->id }}">
                     @csrf
                     @method('PATCH')
-                    <button type="submit" class="btn-aktif-ta" title="Aktifkan Tahun Ajaran">
+                    <button type="button"
+                            class="btn-aktif-ta"
+                            onclick="handleAktifkan('{{ $ta->id }}', '{{ $ta->tahun }}')"
+                            title="Aktifkan Tahun Ajaran">
                         <i class="bi bi-toggle-off me-1"></i>Aktifkan
                     </button>
                 </form>
@@ -270,19 +264,19 @@
                 </button>
 
                 @if(!$ta->is_aktif)
-<form action="{{ route('admin_akademik.tahun-ajaran.destroy', $ta->id) }}" 
-      method="POST" 
-      class="d-inline" 
-      id="delete-form-{{ $ta->id }}">
-    @csrf
-    @method('DELETE')
-    <button type="button" 
-            class="btn-sm-icon btn-del-ta" 
-            onclick="handleDelete('{{ $ta->id }}', '{{ $ta->tahun }}')">
-        <i class="bi bi-trash3-fill"></i>
-    </button>
-</form>
-@endif
+                <form action="{{ route('admin_akademik.tahun-ajaran.destroy', $ta->id) }}"
+                      method="POST"
+                      class="d-inline"
+                      id="delete-form-{{ $ta->id }}">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button"
+                            class="btn-sm-icon btn-del-ta"
+                            onclick="handleDelete('{{ $ta->id }}', '{{ $ta->tahun }}')">
+                        <i class="bi bi-trash3-fill"></i>
+                    </button>
+                </form>
+                @endif
             </div>
         </div>
 
@@ -292,7 +286,7 @@
             <div class="semester-grid">
                 @foreach($ta->semesters->sortBy('semester') as $sem)
                 @php
-                    $isGanjil = $sem->semester === 'GANJIL';
+                    $isGanjil  = $sem->semester === 'GANJIL';
                     $iconClass = $isGanjil ? 'ganjil' : 'genap';
                     $icon      = $isGanjil ? 'bi-sun-fill' : 'bi-moon-stars-fill';
                     if($sem->is_aktif) $iconClass .= ' active';
@@ -311,12 +305,14 @@
                                 <i class="bi bi-play-fill me-1"></i>Berjalan
                             </span>
                         @else
-                            <form action="{{ route('admin_akademik.semester.aktifkan', $sem->id) }}" method="POST">
+                            <form action="{{ route('admin_akademik.semester.aktifkan', $sem->id) }}"
+                                  method="POST"
+                                  id="aktif-sem-form-{{ $sem->id }}">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit"
+                                <button type="button"
                                         class="btn-aktif-sem"
-                                        onclick="return confirm('Aktifkan semester {{ $sem->semester }} — {{ $ta->tahun }}?')">
+                                        onclick="handleAktifkanSemester('{{ $sem->id }}', '{{ $sem->semester }}', '{{ $ta->tahun }}')">
                                     Aktifkan
                                 </button>
                             </form>
@@ -369,7 +365,6 @@
     </div>
     @endforelse
 
-    {{-- Pagination --}}
     @if($tahunAjarans->hasPages())
     <div class="ta-pagination">
         {{ $tahunAjarans->links() }}
@@ -377,16 +372,18 @@
     @endif
 
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    // ── Hapus Tahun Ajaran ──────────────────────────────────────
     function handleDelete(id, tahun) {
         Swal.fire({
-            title: 'Hapus Data?',
+            title: 'Hapus Tahun Ajaran?',
             html: `Tahun ajaran <strong>${tahun}</strong> akan dihapus permanen dari sistem.`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#e11d48', // Warna merah sesuai style btn-delete kamu
-            cancelButtonColor: '#64748b', // Warna abu-abu muted
+            confirmButtonColor: '#e11d48',
+            cancelButtonColor: '#64748b',
             confirmButtonText: 'Ya, Hapus',
             cancelButtonText: 'Batal',
             reverseButtons: true,
@@ -398,10 +395,59 @@
             buttonsStyling: false
         }).then((result) => {
             if (result.isConfirmed) {
-                // Submit form jika user menekan "Ya"
                 document.getElementById('delete-form-' + id).submit();
             }
-        })
+        });
+    }
+
+    // ── Aktifkan Tahun Ajaran ───────────────────────────────────
+    function handleAktifkan(id, tahun) {
+        Swal.fire({
+            title: 'Aktifkan Tahun Ajaran?',
+            html: `Tahun ajaran <strong>${tahun}</strong> akan dijadikan tahun ajaran aktif.<br><small class="text-muted">Tahun ajaran yang sedang aktif akan dinonaktifkan.</small>`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#059669',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Ya, Aktifkan',
+            cancelButtonText: 'Batal',
+            reverseButtons: true,
+            customClass: {
+                popup: 'rounded-4',
+                confirmButton: 'btn btn-success px-4 rounded-pill fw-bold ms-2',
+                cancelButton: 'btn btn-light px-4 rounded-pill fw-bold'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('aktif-form-' + id).submit();
+            }
+        });
+    }
+
+    // ── Aktifkan Semester ───────────────────────────────────────
+    function handleAktifkanSemester(id, semester, tahun) {
+        Swal.fire({
+            title: 'Aktifkan Semester?',
+            html: `Semester <strong>${semester}</strong> tahun ajaran <strong>${tahun}</strong> akan dijadikan semester berjalan.<br><small class="text-muted">Semester lain yang sedang aktif akan dinonaktifkan.</small>`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#059669',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Ya, Aktifkan',
+            cancelButtonText: 'Batal',
+            reverseButtons: true,
+            customClass: {
+                popup: 'rounded-4',
+                confirmButton: 'btn btn-success px-4 rounded-pill fw-bold ms-2',
+                cancelButton: 'btn btn-light px-4 rounded-pill fw-bold'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('aktif-sem-form-' + id).submit();
+            }
+        });
     }
 </script>
 @endsection

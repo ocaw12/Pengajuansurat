@@ -5,7 +5,6 @@
 
 @push('styles')
 <style>
-    /* Styling Card & Table */
     .card { border: none; border-radius: 15px; overflow: hidden; }
     .card-header { background: #fff; border-bottom: 1px solid #f0f0f0; padding: 1.25rem 1.5rem; }
     
@@ -22,7 +21,6 @@
     .table tbody tr { transition: all 0.2s; border-bottom: 1px solid #f1f5f9; }
     .table tbody tr:hover { background-color: #f8fafc; }
 
-    /* Icon Box Replacement for Initial */
     .icon-box {
         width: 38px; height: 38px;
         background-color: #fff9ed;
@@ -31,7 +29,6 @@
         border-radius: 10px; border: 1px solid #fef3c7;
     }
 
-    /* Action Buttons */
     .btn-action {
         width: 34px; height: 34px;
         display: inline-flex; align-items: center; justify-content: center;
@@ -42,7 +39,6 @@
     .btn-delete { background-color: #fff1f2; color: #e11d48; }
     .btn-delete:hover { background-color: #e11d48; color: #fff; }
 
-    /* Code Badge */
     .badge-code { 
         padding: 0.6em 1.2em; 
         font-weight: 700; 
@@ -130,7 +126,6 @@
     </div>
 </div>
 
-{{-- Pagination --}}
 <div class="mt-4 d-flex justify-content-center">
     {{ $fakultas->links() }}
 </div>
@@ -139,20 +134,19 @@
 @foreach ($fakultas as $item)
 <div class="modal fade" id="deleteModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+        <div class="modal-content border-0 shadow">
             <div class="modal-body text-center p-4">
                 <div class="text-danger mb-3">
-                    <i class="bi bi-trash3 text-danger" style="font-size: 3.5rem; opacity: 0.2; position: absolute; left: 50%; transform: translateX(-50%) translateY(-10px);"></i>
-                    <i class="bi bi-exclamation-circle-fill" style="font-size: 3rem; position: relative;"></i>
+                    <i class="bi bi-exclamation-octagon-fill" style="font-size: 3rem;"></i>
                 </div>
-                <h5 class="fw-bold mt-2">Hapus Data?</h5>
+                <h5 class="fw-bold">Hapus Fakultas?</h5>
                 <p class="text-muted small">Fakultas <strong>{{ $item->nama_fakultas }}</strong> akan dihapus permanen dari sistem.</p>
                 <div class="d-flex gap-2 justify-content-center mt-4">
-                    <button type="button" class="btn btn-light rounded-pill px-4 fw-semibold" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
                     <form action="{{ route('admin_akademik.fakultas.destroy', $item->id) }}" method="POST">
                         @csrf
                         @method('DELETE')
-                        <button class="btn btn-danger rounded-pill px-4 fw-semibold shadow-sm">Ya, Hapus</button>
+                        <button class="btn btn-danger rounded-pill px-4">Ya, Hapus</button>
                     </form>
                 </div>
             </div>
