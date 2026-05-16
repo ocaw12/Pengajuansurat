@@ -414,8 +414,10 @@
 
         <div class="menu-wrapper custom-scrollbar">
             <ul class="nav flex-column">
-                @auth
-                    @php $role = Auth::user()->role->nama_role; @endphp
+               @auth
+    @php
+        $roleNav = optional(Auth::user()->role)->nama_role;
+    @endphp
 
                     @if($role === 'mahasiswa')
                         <li class="nav-heading">Utama</li>
@@ -576,14 +578,22 @@
 
                 <div class="ms-auto dropdown">
                     <div class="profile-pill dropdown-toggle" role="button" data-bs-toggle="dropdown">
-                        <div class="avatar-circle">
-                            {{ strtoupper(substr(Auth::user()->email, 0, 1)) }}
-                        </div>
-                        <div class="text-start d-none d-sm-block">
-                            <div class="fw-bold leading-none small text-dark" style="line-height: 1;">{{ explode('@', Auth::user()->email)[0] }}</div>
-                            <div class="text-muted" style="font-size: 0.65rem;">{{ Auth::user()->role->nama_role }}</div>
-                        </div>
-                    </div>
+                       @php
+    $user = Auth::user();
+@endphp
+
+<div class="avatar-circle">
+    {{ $user ? strtoupper(substr($user->email, 0, 1)) : '?' }}
+</div>
+
+<div class="text-start d-none d-sm-block">
+    <div class="fw-bold leading-none small text-dark" style="line-height: 1;">
+        {{ $user ? explode('@', $user->email)[0] : 'Guest' }}
+    </div>
+    <div class="text-muted" style="font-size: 0.65rem;">
+        {{ $user ? optional($user->role)->nama_role : '-' }}
+    </div>
+</div>
                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3" style="border-radius: 15px; min-width: 200px;">
                         <li class="px-3 py-2 d-sm-none border-bottom mb-2">
                             <span class="fw-bold small">{{ Auth::user()->email }}</span>
@@ -635,7 +645,9 @@
 
     {{-- ─────── MOBILE BOTTOM NAVIGATION (Mahasiswa only) ─────── --}}
     @auth
-        @php $roleNav = Auth::user()->role->nama_role; @endphp
+    @php
+        $roleNav = optional(Auth::user()->role)->nama_role;
+    @endphp
         @if($roleNav === 'mahasiswa')
         <nav class="bottom-nav" id="bottomNav" aria-label="Navigasi utama">
             <a href="{{ route('mahasiswa.dashboard') }}"
