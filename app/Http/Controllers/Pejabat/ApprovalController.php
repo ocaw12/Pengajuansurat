@@ -121,8 +121,9 @@ class ApprovalController extends Controller
 
             // 2. Buat URL verifikasi untuk surat dengan waktu approval
             $waktuApproval = now()->format('Y-m-d H:i:s');
-            $urlVerifikasi = 'http://10.75.168.126:8000/verifikasi/'.$kodeVerifikasi.'?pengajuan_surat_id='.$approval->pengajuan_surat_id.'&pejabat_id='.$approval->pejabat_id;
-
+$urlVerifikasi = 'https://sisurat45.my.id/verifikasi/'.$kodeVerifikasi.
+'?pengajuan_surat_id='.$approval->pengajuan_surat_id.
+'&pejabat_id='.$approval->pejabat_id;
             // 3. Generate QR Code menggunakan simple-qrcode
             $qrCode = QrCode::format('png')->size(200)->generate($urlVerifikasi);
 
