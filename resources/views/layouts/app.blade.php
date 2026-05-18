@@ -575,31 +575,33 @@
                 </nav>
 
                 <div class="ms-auto dropdown">
-                    <div class="profile-pill dropdown-toggle" role="button" data-bs-toggle="dropdown">
-                        <div class="avatar-circle">
-                            {{ strtoupper(substr(Auth::user()->email, 0, 1)) }}
-                        </div>
-                        <div class="text-start d-none d-sm-block">
-                            <div class="fw-bold leading-none small text-dark" style="line-height: 1;">{{ explode('@', Auth::user()->email)[0] }}</div>
-                            <div class="text-muted" style="font-size: 0.65rem;">{{ Auth::user()->role->nama_role }}</div>
-                        </div>
-                    </div>
-                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3" style="border-radius: 15px; min-width: 200px;">
-                        <li class="px-3 py-2 d-sm-none border-bottom mb-2">
-                            <span class="fw-bold small">{{ Auth::user()->email }}</span>
-                        </li>
-                        <li><a class="dropdown-item rounded-3 py-2 mx-2 w-auto" href="{{ route('profile') }}"><i class="bi bi-person me-2"></i> Profil Saya</a></li>
-                        <li><hr class="dropdown-divider mx-2"></li>
-                        <li>
-                           <form method="POST" action="{{ route('logout') }}" id="logoutFormDropdown">
+    @auth
+    <div class="profile-pill dropdown-toggle" role="button" data-bs-toggle="dropdown">
+        <div class="avatar-circle">
+            {{ strtoupper(substr(Auth::user()->email, 0, 1)) }}
+        </div>
+        <div class="text-start d-none d-sm-block">
+            <div class="fw-bold leading-none small text-dark" style="line-height: 1;">{{ explode('@', Auth::user()->email)[0] }}</div>
+            <div class="text-muted" style="font-size: 0.65rem;">{{ Auth::user()->role->nama_role }}</div>
+        </div>
+    </div>
+    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3" style="border-radius: 15px; min-width: 200px;">
+        <li class="px-3 py-2 d-sm-none border-bottom mb-2">
+            <span class="fw-bold small">{{ Auth::user()->email }}</span>
+        </li>
+        <li><a class="dropdown-item rounded-3 py-2 mx-2 w-auto" href="{{ route('profile') }}"><i class="bi bi-person me-2"></i> Profil Saya</a></li>
+        <li><hr class="dropdown-divider mx-2"></li>
+        <li>
+           <form method="POST" action="{{ route('logout') }}" id="logoutFormDropdown">
     @csrf
     <button type="submit" class="dropdown-item rounded-3 py-2 mx-2 w-auto text-danger" id="logoutBtnDropdown">
         <i class="bi bi-box-arrow-right me-2"></i> Logout
     </button>
 </form>
-                        </li>
-                    </ul>
-                </div>
+        </li>
+    </ul>
+    @endauth
+</div>
             </div>
         </nav>
 
