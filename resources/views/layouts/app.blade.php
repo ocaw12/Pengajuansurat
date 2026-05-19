@@ -145,6 +145,27 @@
         @media (max-width: 767.98px) {
             body { background: #f0f4f8; }
 
+            .bottom-nav {
+    pointer-events: auto !important;
+}
+
+.bottom-nav * {
+    pointer-events: auto !important;
+}
+
+.main-content {
+    position: relative;
+    z-index: 1;
+}
+
+main.container-fluid {
+    position: relative;
+    z-index: 1;
+}
+
+.bottom-nav {
+    z-index: 99999 !important;
+}
             /* Hide desktop sidebar */
             .sidebar { display: none !important; }
 
@@ -677,10 +698,11 @@
                 <span>Profil</span>
             </a>
 
-            <form method="POST" action="{{ route('logout') }}" id="logoutFormMobile" class="bottom-nav-item p-0 border-0 bg-transparent" style="cursor:pointer;">
-                @csrf
-                <button type="submit" class="bottom-nav-item border-0 bg-transparent w-100 h-100" id="logoutBtnMobile" style="flex:1;">
-                    <i class="bi bi-box-arrow-right"></i>
+<form method="POST" action="{{ route('logout') }}" 
+      id="logoutFormMobile"
+      style="flex:1;">                @csrf
+<button type="submit" 
+class="border-0 bg-transparent w-100 h-100 d-flex flex-column align-items-center justify-content-center">                    <i class="bi bi-box-arrow-right"></i>
                     <span>Keluar</span>
                 </button>
             </form>
