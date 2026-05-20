@@ -8,17 +8,16 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
+     *
+     * @return void
      */
-    public function run(): void
+    public function run()
     {
+        // Panggil seeder secara berurutan
+        // PresentationSeeder dipanggil lebih dulu agar Master Jabatan, Fakultas, Prodi, dll tersedia
         $this->call([
-            RoleSeeder::class,
-            DataMasterAkademikSeeder::class,
-            UserSeeder::class,
-            ProfilSeeder::class, // Harus setelah User & DataMaster
-            JenisSuratSeeder::class,
-            AlurApprovalSeeder::class, // Harus setelah JenisSurat & MasterJabatan
+            PresentationSeeder::class,
+            AkademikDanSuratSeeder::class,
         ]);
     }
 }
-

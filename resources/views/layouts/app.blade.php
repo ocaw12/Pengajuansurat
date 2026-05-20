@@ -10,6 +10,7 @@
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
 
     {{-- Bootstrap & Icons --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -146,26 +147,26 @@
             body { background: #f0f4f8; }
 
             .bottom-nav {
-    pointer-events: auto !important;
-}
+                pointer-events: auto !important;
+            }
 
-.bottom-nav * {
-    pointer-events: auto !important;
-}
+            .bottom-nav * {
+                pointer-events: auto !important;
+            }
 
-.main-content {
-    position: relative;
-    z-index: 1;
-}
+            .main-content {
+                position: relative;
+                z-index: 1;
+            }
 
-main.container-fluid {
-    position: relative;
-    z-index: 1;
-}
+            main.container-fluid {
+                position: relative;
+                z-index: 1;
+            }
 
-.bottom-nav {
-    z-index: 99999 !important;
-}
+            .bottom-nav {
+                z-index: 99999 !important;
+            }
             /* Hide desktop sidebar */
             .sidebar { display: none !important; }
 
@@ -426,6 +427,9 @@ main.container-fluid {
 </head>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <body>
+    
+    <!-- ELEMEN BACKDROP UNTUK MENU MOBILE -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
     {{-- ─────── DESKTOP SIDEBAR ─────── --}}
     <aside class="sidebar" id="sidebar">
@@ -732,6 +736,29 @@ class="border-0 bg-transparent w-100 h-100 d-flex flex-column align-items-center
 
     <script>
     document.addEventListener('DOMContentLoaded', function () {
+
+        // --- TAMBAHAN SCRIPT UNTUK TOGGLE HAMBURGER MENU ---
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('sidebarToggleBtn');
+        const backdrop = document.getElementById('sidebarBackdrop');
+
+        if (toggleBtn && sidebar && backdrop) {
+            // Membuka menu saat hamburger diklik
+            toggleBtn.addEventListener('click', function () {
+                sidebar.classList.add('show');
+                backdrop.classList.add('show');
+                document.body.style.overflow = 'hidden'; // Mencegah scrolling di background
+            });
+
+            // Menutup menu saat area gelap (backdrop) diklik
+            backdrop.addEventListener('click', function () {
+                sidebar.classList.remove('show');
+                backdrop.classList.remove('show');
+                document.body.style.overflow = ''; // Mengembalikan fungsi scrolling
+            });
+        }
+        // ----------------------------------------------------
+
 
         function confirmLogout(formId) {
             const form = document.getElementById(formId);
