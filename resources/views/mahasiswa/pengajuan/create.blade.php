@@ -189,9 +189,12 @@
                                 html += `<textarea class="form-control" name="data_pendukung[${field.name}]" rows="2" required>${val}</textarea>`;
                             } else if(field.type === 'file') {
                                 html += `<input type="file" class="form-control" name="data_pendukung[${field.name}]" required>`;
+                          } else if (field.type === 'date') {
+                             const today = new Date().toISOString().split('T')[0];
+                              html += `<input type="date" class="form-control" name="data_pendukung[${field.name}]" value="${val}" min="${today}" required>`;
                             } else {
-                                html += `<input type="${field.type}" class="form-control" name="data_pendukung[${field.name}]" value="${val}" required>`;
-                            }
+                                 html += `<input type="${field.type}" class="form-control" name="data_pendukung[${field.name}]" value="${val}" required>`;
+                                }
                             html += `</div>`;
                             wrapper.innerHTML += html;
                         });
