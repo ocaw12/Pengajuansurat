@@ -80,13 +80,22 @@
                     </div>
 
                     @if($pengajuan->data_pendukung)
-                        @foreach($pengajuan->data_pendukung as $key => $value)
-                        <div class="col-md-6">
-                            <label class="info-label">{{ Str::title(str_replace('_', ' ', $key)) }}</label>
-                            <span class="info-value">{{ $value }}</span>
-                        </div>
-                        @endforeach
-                    @endif
+    @foreach($pengajuan->data_pendukung as $key => $value)
+    <div class="col-md-6">
+        <label class="info-label">{{ Str::title(str_replace('_', ' ', $key)) }}</label>
+        <span class="info-value">
+            @if(is_string($value) && Str::contains($value, 'dokumen_pengajuan'))
+                <a href="{{ asset('storage/'.$value) }}" target="_blank" 
+                   class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.75rem;">
+                    <i class="bi bi-file-earmark-pdf"></i> Lihat
+                </a>
+            @else
+                {{ is_array($value) ? implode(', ', $value) : $value }}
+            @endif
+        </span>
+    </div>
+    @endforeach
+@endif
                 </div>
             </div>
         </div>

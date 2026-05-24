@@ -5,9 +5,12 @@
 
 @push('styles')
 <style>
-    .container-fluid { max-width: 1400px; padding-top: 0.5rem !important; }
+    .container-fluid { max-width: 1500px; padding-top: 0.5rem !important; }
 
-    .card { border: none; border-radius: 15px; overflow: hidden; }
+    .card {
+         border: none;
+          border-radius: 15px; overflow: hidden; 
+        }
     .card-header { background: #fff; border-bottom: 1px solid #f0f0f0; padding: 1.25rem 1.5rem; }
     
     .table thead th {

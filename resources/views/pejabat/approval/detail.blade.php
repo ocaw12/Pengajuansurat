@@ -74,13 +74,30 @@
                     </div>
 
                     @if($pengajuan->data_pendukung)
-                        @foreach($pengajuan->data_pendukung as $key => $value)
-                        <div class="col-sm-6">
-                            <label class="info-label d-block mb-1">{{ Str::title(str_replace('_', ' ', $key)) }}</label>
-                            <span class="info-value">{{ $value }}</span>
-                        </div>
-                        @endforeach
-                    @endif
+    @foreach($pengajuan->data_pendukung as $key => $value)
+    <div class="col-md-6">
+        <label class="info-label">{{ Str::title(str_replace('_', ' ', $key)) }}</label>
+        @if(is_string($value) && Str::contains($value, 'dokumen_pengajuan'))
+            <div class="mt-1 d-flex gap-2">
+                <a href="{{ asset('storage/'.$value) }}" target="_blank" 
+                   class="btn btn-sm btn-outline-primary py-1 px-2" 
+                   style="font-size: 0.75rem; border-radius: 8px;">
+                    <i class="bi bi-eye me-1"></i> Preview
+                </a>
+                <a href="{{ asset('storage/'.$value) }}" download 
+                   class="btn btn-sm btn-outline-secondary py-1 px-2" 
+                   style="font-size: 0.75rem; border-radius: 8px;">
+                    <i class="bi bi-download me-1"></i> Unduh
+                </a>
+            </div>
+        @elseif(is_array($value))
+            <span class="info-value">{{ implode(', ', $value) }}</span>
+        @else
+            <span class="info-value">{{ $value }}</span>
+        @endif
+    </div>
+    @endforeach
+@endif
                 </div>
             </div>
         </div>
