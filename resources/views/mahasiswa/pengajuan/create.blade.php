@@ -5,11 +5,9 @@
 
 @push('styles')
 <style>
-    /* 1. Full Width Layout */
     .card { border: none; border-radius: 12px; width: 100%; }
     .card-body { padding: 1.75rem; }
 
-    /* 2. Input & Label Rapi */
     .form-label { font-size: 0.8rem; color: #475569; margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
     .form-control, .form-select {
         border-radius: 8px;
@@ -23,7 +21,6 @@
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
 
-    /* 3. Method Card (Radio) - Proporsional */
     .method-card {
         border: 2px solid #f1f5f9;
         border-radius: 10px;
@@ -43,14 +40,12 @@
     .form-check-input:checked + .method-card i { color: #3b82f6; }
     .form-check-input { display: none; }
 
-    /* 4. Dynamic Container */
     #form-dinamis-container {
         border: 1px dashed #cbd5e1;
         background-color: #f8fafc;
         border-radius: 12px;
     }
 
-    /* 5. Submit Button - Elegan & Tidak Raksasa */
     .btn-submit { 
         border-radius: 8px; 
         padding: 0.7rem 2rem; 
@@ -59,6 +54,16 @@
         transition: all 0.2s ease;
     }
     .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2); }
+
+    /* Alert pengajuan aktif */
+    .alert-active-pengajuan {
+        background-color: #fefce8;
+        border: 1px solid #fde68a;
+        border-radius: 10px;
+        padding: 0.9rem 1rem;
+        font-size: 0.85rem;
+        color: #92400e;
+    }
 </style>
 @endpush
 
@@ -93,6 +98,16 @@
                                     </option>
                                 @endforeach
                             </select>
+                            @error('jenis_surat_id')
+                                <div class="invalid-feedback fw-semibold">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Warning pengajuan aktif (muncul via JS) --}}
+                        <div id="warning-pengajuan-aktif" class="alert-active-pengajuan mb-4" style="display: none;">
+                            <i class="bi bi-clock-history me-2"></i>
+                            <strong>Pengajuan Sedang Berjalan</strong>
+                            <p class="mb-0 mt-1">Anda sudah memiliki pengajuan aktif untuk jenis surat ini. Silakan tunggu hingga proses <strong>selesai</strong> atau <strong>ditolak</strong> sebelum mengajukan kembali.</p>
                         </div>
 
                         <div class="mb-4">
@@ -100,6 +115,9 @@
                             <textarea class="form-control @error('keperluan') is-invalid @enderror" 
                                       id="keperluan" name="keperluan" rows="4" 
                                       placeholder="Jelaskan alasan pengajuan secara detail..." required>{{ old('keperluan') }}</textarea>
+                            @error('keperluan')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div id="form-dinamis-container" class="p-4 mb-4" style="display: none;">
@@ -145,7 +163,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end align-items-center border-top pt-4 mt-2">
-                    <button type="submit" class="btn btn-primary btn-submit shadow-sm">
+                    <button type="submit" id="btn-submit" class="btn btn-primary btn-submit shadow-sm">
                         <i class="bi bi-send-check-fill me-2"></i>Kirim Pengajuan
                     </button>
                 </div>
@@ -162,9 +180,24 @@
         const jenisSuratSelect = document.getElementById('jenis_surat_id');
         const container = document.getElementById('form-dinamis-container');
         const wrapper = document.getElementById('dynamic-fields-wrapper');
+        const warningAktif = document.getElementById('warning-pengajuan-aktif');
+        const btnSubmit = document.getElementById('btn-submit');
 
-        // Menangkap input lama agar tidak reset
         const oldData = @json(old('data_pendukung') ?? []);
+
+        // Data pengajuan aktif milik mahasiswa yang dikirim dari controller
+        const pengajuanAktif = @json($pengajuan_aktif_ids ?? []);
+
+        function checkAktif(id) {
+            const aktif = pengajuanAktif.includes(parseInt(id));
+            warningAktif.style.display = aktif ? 'block' : 'none';
+            btnSubmit.disabled = aktif;
+            if (aktif) {
+                btnSubmit.classList.add('disabled');
+            } else {
+                btnSubmit.classList.remove('disabled');
+            }
+        }
 
         function loadFields(id) {
             if (!id) {
@@ -185,16 +218,16 @@
                             let html = `<div class="mb-3">
                                 <label class="form-label small fw-bold">${field.label} <span class="text-danger">*</span></label>`;
                             
-                            if(field.type === 'textarea') {
+                            if (field.type === 'textarea') {
                                 html += `<textarea class="form-control" name="data_pendukung[${field.name}]" rows="2" required>${val}</textarea>`;
-                            } else if(field.type === 'file') {
+                            } else if (field.type === 'file') {
                                 html += `<input type="file" class="form-control" name="data_pendukung[${field.name}]" required>`;
-                          } else if (field.type === 'date') {
-                             const today = new Date().toISOString().split('T')[0];
-                              html += `<input type="date" class="form-control" name="data_pendukung[${field.name}]" value="${val}" min="${today}" required>`;
+                            } else if (field.type === 'date') {
+                                const today = new Date().toISOString().split('T')[0];
+                                html += `<input type="date" class="form-control" name="data_pendukung[${field.name}]" value="${val}" min="${today}" required>`;
                             } else {
-                                 html += `<input type="${field.type}" class="form-control" name="data_pendukung[${field.name}]" value="${val}" required>`;
-                                }
+                                html += `<input type="${field.type}" class="form-control" name="data_pendukung[${field.name}]" value="${val}" required>`;
+                            }
                             html += `</div>`;
                             wrapper.innerHTML += html;
                         });
@@ -208,10 +241,12 @@
         }
 
         jenisSuratSelect.addEventListener('change', function() {
+            checkAktif(this.value);
             loadFields(this.value);
         });
 
         if (jenisSuratSelect.value) {
+            checkAktif(jenisSuratSelect.value);
             loadFields(jenisSuratSelect.value);
         }
     });

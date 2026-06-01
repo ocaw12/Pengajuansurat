@@ -490,6 +490,14 @@
                                 <i class="bi bi-person-check"></i><span>Antrian Pengambilan</span>
                             </a>
                         </li>
+                        {{-- Tambahkan setelah nav item "Antrian Pengambilan" di section staff_jurusan --}}
+
+<li class="nav-heading">Laporan</li>
+<li class="nav-item">
+<a href="{{ route('staff_jurusan.laporan.index') }}" 
+   class="nav-link {{ request()->routeIs('staff_jurusan.laporan.*') ? 'active' : '' }}">        <i class="bi bi-bar-chart-line"></i><span>Laporan Pengajuan</span>
+    </a>
+</li>
 
                     @elseif($role === 'pejabat')
                         <li class="nav-heading">Utama</li>

@@ -16,6 +16,7 @@ use App\Http\Controllers\Mahasiswa\RiwayatController;
 use App\Http\Controllers\StaffJurusan\DashboardController as StaffDashboard;
 use App\Http\Controllers\StaffJurusan\ValidasiController;
 use App\Http\Controllers\StaffJurusan\CetakController; // <-- Pastikan ini di-import
+use App\Http\Controllers\StaffJurusan\LaporanController;
 
 // --- CONTROLLER PEJABAT ---
 use App\Http\Controllers\Pejabat\DashboardController as PejabatDashboard;
@@ -142,7 +143,10 @@ Route::middleware(['auth'])->group(function () {
         
         Route::get('/antrian-pengambilan', [ValidasiController::class, 'indexPengambilan'])->name('cetak.pengambilan'); // <-- Antrian Siap Diambil
         Route::post('/tandai-sudah-diambil/{pengajuan}', [ValidasiController::class, 'markAsDiambil'])->name('cetak.diambil'); // <-- Aksi Selesai
-    });
+        Route::get('/laporan',        [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/laporan',              [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel'])->name('laporan.exportExcel');
+        Route::get('/laporan/export-pdf',   [LaporanController::class, 'exportPdf'])->name('laporan.exportPdf');    });
 
 
 

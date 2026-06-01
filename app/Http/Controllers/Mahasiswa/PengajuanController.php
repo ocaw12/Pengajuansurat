@@ -19,7 +19,13 @@ class PengajuanController extends Controller
     public function create(): View
     {
         $jenis_surats = JenisSurat::orderBy('nama_surat', 'asc')->get();
-        return view('mahasiswa.pengajuan.create', compact('jenis_surats'));
+
+        $pengajuan_aktif_ids = PengajuanSurat::where('mahasiswa_id', Auth::user()->mahasiswa->id)
+            ->whereNotIn('status_pengajuan', ['selesai', 'ditolak'])
+            ->pluck('jenis_surat_id')
+            ->toArray();
+
+        return view('mahasiswa.pengajuan.create', compact('jenis_surats', 'pengajuan_aktif_ids'));
     }
 
     /**
@@ -34,74 +40,72 @@ class PengajuanController extends Controller
      * Menyimpan pengajuan baru ke database.
      */
     public function store(Request $request): RedirectResponse
-{
-    $request->validate([
-        'jenis_surat_id' => 'required|exists:jenis_surat,id',
-        'keperluan' => 'required|string|min:10',
-        'metode_pengambilan' => 'required|in:digital,cetak',
-        'data_pendukung' => 'nullable|array'
-    ]);
+    {
+        $request->validate([
+            'jenis_surat_id' => 'required|exists:jenis_surat,id',
+            'keperluan' => 'required|string|min:10',
+            'metode_pengambilan' => 'required|in:digital,cetak',
+            'data_pendukung' => 'nullable|array'
+        ]);
 
-    try {
+        // Cek pengajuan aktif untuk jenis surat yang sama
+        $mahasiswaId = Auth::user()->mahasiswa->id;
+        $pengajuanAktif = PengajuanSurat::where('mahasiswa_id', $mahasiswaId)
+            ->where('jenis_surat_id', $request->jenis_surat_id)
+            ->whereNotIn('status_pengajuan', ['selesai', 'ditolak'])
+            ->exists();
 
-        $dataPendukung = [];
+        if ($pengajuanAktif) {
+            return back()
+                ->withInput()
+                ->withErrors(['jenis_surat_id' => 'Anda masih memiliki pengajuan aktif untuk jenis surat ini. Silakan tunggu hingga proses selesai.']);
+        }
 
-        if ($request->has('data_pendukung')) {
+        try {
+            $dataPendukung = [];
 
-            foreach ($request->data_pendukung as $key => $value) {
-
-                // Jika field adalah file
-                if ($request->hasFile("data_pendukung.$key")) {
-
-                    $file = $request->file("data_pendukung.$key");
-
-                    $path = $file->store('dokumen_pengajuan', 'public');
-
-                    $dataPendukung[$key] = $path;
-
-                } else {
-
-                    $dataPendukung[$key] = $value;
-
+            if ($request->has('data_pendukung')) {
+                foreach ($request->data_pendukung as $key => $value) {
+                    if ($request->hasFile("data_pendukung.$key")) {
+                        $file = $request->file("data_pendukung.$key");
+                        $path = $file->store('dokumen_pengajuan', 'public');
+                        $dataPendukung[$key] = $path;
+                    } else {
+                        $dataPendukung[$key] = $value;
+                    }
                 }
             }
 
+            PengajuanSurat::create([
+                'mahasiswa_id' => Auth::user()->mahasiswa->id,
+                'jenis_surat_id' => $request->jenis_surat_id,
+                'keperluan' => $request->keperluan,
+                'metode_pengambilan' => $request->metode_pengambilan,
+                'data_pendukung' => $dataPendukung,
+                'status_pengajuan' => 'pending',
+                'tanggal_pengajuan' => now(),
+            ]);
+
+            return redirect()
+                ->route('mahasiswa.dashboard')
+                ->with('success', 'Surat berhasil diajukan. Silakan tunggu validasi staff.');
+
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Terjadi kesalahan saat menyimpan pengajuan. Coba lagi.')
+                ->withInput();
         }
-
-        PengajuanSurat::create([
-            'mahasiswa_id' => Auth::user()->mahasiswa->id,
-            'jenis_surat_id' => $request->jenis_surat_id,
-            'keperluan' => $request->keperluan,
-            'metode_pengambilan' => $request->metode_pengambilan,
-            'data_pendukung' => $dataPendukung,
-            'status_pengajuan' => 'pending',
-            'tanggal_pengajuan' => now(),
-        ]);
-
-        return redirect()
-            ->route('mahasiswa.dashboard')
-            ->with('success', 'Surat berhasil diajukan. Silakan tunggu validasi staff.');
-
-    } catch (\Exception $e) {
-
-        return back()
-            ->with('error', 'Terjadi kesalahan saat menyimpan pengajuan. Coba lagi.')
-            ->withInput();
-
     }
-}
 
     /**
      * Menampilkan detail dan status tracking satu pengajuan.
      */
     public function show(PengajuanSurat $pengajuan): View
     {
-        // Pastikan mahasiswa hanya bisa melihat surat miliknya
         if ($pengajuan->mahasiswa_id !== Auth::user()->mahasiswa->id) {
             abort(403, 'Akses Ditolak');
         }
 
-        // Eager load relasi untuk halaman detail
         $pengajuan->load(
             'jenisSurat', 
             'adminValidator', 
@@ -112,22 +116,18 @@ class PengajuanController extends Controller
     }
 
     private function authorizeStaff(PengajuanSurat $pengajuan): void
-        {
-            // Pastikan user adalah admin staff dan memiliki profil
-            if (!Auth::user()->adminStaff) {
-                 abort(403, 'Akses ditolak. Profil admin staff tidak ditemukan.');
-            }
-            $programStudiId = Auth::user()->adminStaff->program_studi_id;
-    
-            // TAMBAHKAN PENGECEKAN INI:
-            if (!$pengajuan->mahasiswa) {
-                 // Jika relasi mahasiswa null, beri pesan error spesifik
-                 abort(500, 'Error: Data mahasiswa tidak dapat dimuat untuk pengajuan ini. ID Mahasiswa: ' . $pengajuan->mahasiswa_id);
-            }
-    
-            // Lanjutkan pengecekan program studi
-            if ($pengajuan->mahasiswa->program_studi_id != $programStudiId) {
-                abort(403, 'Akses ditolak. Anda tidak berwenang untuk surat dari prodi ini.');
-            }
+    {
+        if (!Auth::user()->adminStaff) {
+            abort(403, 'Akses ditolak. Profil admin staff tidak ditemukan.');
         }
+        $programStudiId = Auth::user()->adminStaff->program_studi_id;
+
+        if (!$pengajuan->mahasiswa) {
+            abort(500, 'Error: Data mahasiswa tidak dapat dimuat untuk pengajuan ini. ID Mahasiswa: ' . $pengajuan->mahasiswa_id);
+        }
+
+        if ($pengajuan->mahasiswa->program_studi_id != $programStudiId) {
+            abort(403, 'Akses ditolak. Anda tidak berwenang untuk surat dari prodi ini.');
+        }
+    }
 }
